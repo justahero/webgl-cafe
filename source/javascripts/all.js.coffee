@@ -1,3 +1,4 @@
 #= require jquery
 #= require handlebars
-#= require core/main
+#= require cafe/glcontext
+#= require app/main
