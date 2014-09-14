@@ -13,6 +13,7 @@ gem 'slim',                 '~> 2.0.2'
 
 # Handlebars templates
 gem 'handlebars-source',    '~> 1.3.0'
+gem 'handlebars_assets'
 
 # Assets
 gem 'jquery-source',        '~> 2.0.0'
