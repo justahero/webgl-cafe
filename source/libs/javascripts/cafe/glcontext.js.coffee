@@ -1,6 +1,4 @@
-root = exports ? this
-
-class GlContext
+class @GlContext
   constructor: (canvas) ->
     @gl = @_initGlContext(canvas)
 
@@ -10,5 +8,3 @@ class GlContext
     catch e
       alert("Unable to initialize WebGl")
     gl
-
-root.GlContext = GlContext
