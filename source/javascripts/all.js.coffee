@@ -1,3 +1,3 @@
 #= require jquery
+#= require handlebars
 #= require core/main
-#= require_tree ./templates

@@ -1,4 +1,5 @@
 require 'dotenv'
+require 'handlebars_assets'
 
 TARGET = ENV['TARGET'] || environment
 
@@ -19,6 +20,8 @@ sprockets.append_path  "libs/javascripts"
 # sprockets.append_path  "libs/fonts"
 # sprockets.append_path  "libs/images"
 sprockets.append_path "vendor"
+sprockets.append_path HandlebarsAssets.path
+
 
 configure :development do
   set :debug_assets, true
