@@ -13,6 +13,7 @@ class @WebGlCompiler
     @_compileShader(shaderSource, shaderType)
 
   _compileShader: (shaderSource, shaderType) ->
+    console.log("Comiling shader: \n#{shaderSource}")
     shader = @gl.createShader(shaderType)
     @gl.shaderSource(shader, shaderSource)
     @gl.compileShader(shader)
