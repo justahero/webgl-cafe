@@ -20,22 +20,18 @@ shaders =
   compiler = new WebGlCompiler(context.gl, shaders)
   program  = compiler.createProgramWithShaders('main_vertex', 'main_fragment')
 
-  context.clearBuffer(GlColor.WHITE)
+  context.clearBuffer(GlColor.BLACK)
+  context.useProgram(program)
+  vertexCoord = context.gl.getAttribLocation(program, "vertexCoord")
 
-  gl = context.gl
-  gl.useProgram(program)
-  coordinates = new Float32Array([
-     0.0,  0.8
-    -0.8, -0.8
-     0.8, -0.8
+  vertices = new Float32Array([
+    -0.8, -0.8,
+     0.8, -0.8,
+    -0.8,  0.8,
+    -0.8,  0.8,
+     0.8, -0.8,
+     0.8,  0.8
   ])
-  vertexCoord = gl.getAttribLocation(program, "vertexCoord")
- 
-  buffer = gl.createBuffer()
-  gl.bindBuffer(gl.ARRAY_BUFFER, buffer)
-  gl.bufferData(gl.ARRAY_BUFFER, coordinates, gl.STATIC_DRAW)
- 
-  gl.enableVertexAttribArray(vertexCoord)
-  gl.vertexAttribPointer(vertexCoord, 2, gl.FLOAT, false, 0, 0)
- 
-  gl.drawArrays(gl.TRIANGLES, 0, 3)
+
+  buffer = new VertexBuffer(context.gl, vertices, 2)
+  buffer.render(vertexCoord)
