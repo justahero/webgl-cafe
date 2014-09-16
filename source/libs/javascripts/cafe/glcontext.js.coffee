@@ -7,7 +7,7 @@ class @GlContext
     @gl.clear(@gl.COLOR_BUFFER_BIT)
 
   useProgram: (program) ->
-    @gl.useProgram(program)
+    @gl.useProgram(program.program)
 
   _initGlContext: (canvas) ->
     try

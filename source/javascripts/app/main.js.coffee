@@ -22,7 +22,7 @@ shaders =
 
   context.clearBuffer(GlColor.BLACK)
   context.useProgram(program)
-  vertexCoord = context.gl.getAttribLocation(program, "vertexCoord")
+  vertexCoord = program.getAttribLocation("vertexCoord")
 
   vertices = new Float32Array([
     -0.8, -0.8,
