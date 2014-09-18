@@ -23,7 +23,7 @@ context = null
 modelViewMatrix  = null
 projectionMatrix = null
 
-indicesBuffer = null
+indexBuffer = null
 vertexBuffer  = null
 
 program = null
@@ -31,7 +31,7 @@ shaderVertexPositionAttribute = null
 shaderProjectionMatrixUniform = null
 shaderModelViewMatrixUniform  = null
 
-duration = 5000.0
+duration = 2000.0
 currentTime = Date.now()
 
 initMatrices = (canvas) ->
@@ -47,22 +47,26 @@ initViewport = (context, canvas) ->
 animate = () ->
   now = Date.now()
   deltat = now - currentTime
-  console.log("DELTA: #{deltat}")
   currentTime = now
 
   fract = deltat / duration
   angle = Math.PI * 2.0 * fract
 
-  mat4.rotate(modelViewMatrix, modelViewMatrix, angle, [0, 1, 1])
+  mat4.rotate(modelViewMatrix, modelViewMatrix, angle, [0, 1, 0])
 
 render = (context, canvas) ->
   context.clearBuffer(GlColor.BLACK)
-  context.gl.drawArrays(context.gl.TRIANGLES, 0, 12);
 
   context.useProgram(program)
+
+  context.gl.bindBuffer(context.gl.ARRAY_BUFFER, vertexBuffer.buffer)
   context.gl.vertexAttribPointer(shaderVertexPositionAttribute, 2, context.gl.FLOAT, false, 0, 0)
+  context.gl.bindBuffer(context.gl.ELEMENT_ARRAY_BUFFER, indexBuffer.buffer)
+
   context.gl.uniformMatrix4fv(shaderProjectionMatrixUniform, false, projectionMatrix);
   context.gl.uniformMatrix4fv(shaderModelViewMatrixUniform, false, modelViewMatrix);
+
+  context.gl.drawElements(context.gl.TRIANGLES, indexBuffer.size, context.gl.UNSIGNED_SHORT, 0);
 
 
 renderLoop = (context, canvas) ->
@@ -96,7 +100,7 @@ renderLoop = (context, canvas) ->
      1.0,  1.0, -1.0,
     -1.0,  1.0, -1.0,
   ])
-  vertexBuffer = new VertexBuffer(context.gl, vertices, 24)
+  vertexBuffer = new VertexBuffer(context.gl, vertices, 2)
 
   indices = new Uint16Array([
     0, 1, 2,
@@ -112,6 +116,6 @@ renderLoop = (context, canvas) ->
     3, 2, 6,
     6, 7, 3,
   ])
-  indicesBuffer = new IndexBuffer(context.gl, indices)
+  indexBuffer = new IndexBuffer(context.gl, indices)
 
   renderLoop(context, canvas)
