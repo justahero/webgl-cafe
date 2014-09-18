@@ -4,7 +4,16 @@ class @Program
     @_link()
 
   getAttribLocation: (attribName) ->
-    @gl.getAttribLocation(@program, attribName)
+    location = @gl.getAttribLocation(@program, attribName)
+    if location == -1
+       throw "Could not getAttribLocation for #{attribName}"
+    location
+
+  uniformLocation: (attribName) ->
+    location = @gl.getUniformLocation(@program, attribName)
+    if location == -1
+       throw "Could not getUniformLocation for #{attribName}"
+    location
 
   _link: () ->
     @program = @gl.createProgram()
