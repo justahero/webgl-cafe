@@ -27,6 +27,12 @@ indicesBuffer = null
 vertexBuffer  = null
 
 program = null
+shaderVertexPositionAttribute = null
+shaderProjectionMatrixUniform = null
+shaderModelViewMatrixUniform  = null
+
+duration = 5000.0
+currentTime = Date.now()
 
 initMatrices = (canvas) ->
   modelViewMatrix = mat4.create()
@@ -38,13 +44,31 @@ initMatrices = (canvas) ->
 initViewport = (context, canvas) ->
   context.setViewport(0, 0, canvas.width, canvas.height)
 
+animate = () ->
+  now = Date.now()
+  deltat = now - currentTime
+  console.log("DELTA: #{deltat}")
+  currentTime = now
+
+  fract = deltat / duration
+  angle = Math.PI * 2.0 * fract
+
+  mat4.rotate(modelViewMatrix, modelViewMatrix, angle, [0, 1, 1])
+
 render = (context, canvas) ->
   context.clearBuffer(GlColor.BLACK)
   context.gl.drawArrays(context.gl.TRIANGLES, 0, 12);
 
+  context.useProgram(program)
+  context.gl.vertexAttribPointer(shaderVertexPositionAttribute, 2, context.gl.FLOAT, false, 0, 0)
+  context.gl.uniformMatrix4fv(shaderProjectionMatrixUniform, false, projectionMatrix);
+  context.gl.uniformMatrix4fv(shaderModelViewMatrixUniform, false, modelViewMatrix);
+
+
 renderLoop = (context, canvas) ->
   requestAnimationFrame(-> renderLoop(context, canvas))
   render(context, canvas)
+  animate()
 
 @main = ->
   canvas  = document.getElementById('webglcanvas')
@@ -72,7 +96,7 @@ renderLoop = (context, canvas) ->
      1.0,  1.0, -1.0,
     -1.0,  1.0, -1.0,
   ])
-  buffer = new VertexBuffer(context.gl, vertices, 24)
+  vertexBuffer = new VertexBuffer(context.gl, vertices, 24)
 
   indices = new Uint16Array([
     0, 1, 2,
@@ -89,11 +113,5 @@ renderLoop = (context, canvas) ->
     6, 7, 3,
   ])
   indicesBuffer = new IndexBuffer(context.gl, indices)
-  # buffer.render(vertexPos)  
-
-  context.useProgram(program)
-  gl.vertexAttribPointer(shaderVertexPositionAttribute, 2, gl.FLOAT, false, 0, 0)
-  gl.uniformMatrix4fv(shaderProjectionMatrixUniform, false, projectionMatrix);
-  gl.uniformMatrix4fv(shaderModelViewMatrixUniform, false, modelViewMatrix);
 
   renderLoop(context, canvas)
