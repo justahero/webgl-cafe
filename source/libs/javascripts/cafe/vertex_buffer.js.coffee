@@ -1,16 +1,11 @@
 class @VertexBuffer
-  constructor: (@gl, vertices, numTriangles) ->
+  constructor: (@gl, vertices) ->
     @size   = 0
     @buffer = null
-    @_initialize(vertices, numTriangles)
+    @_initialize(vertices)
 
-  render: (positionLocation) ->
-    @gl.enableVertexAttribArray(positionLocation)
-    @gl.vertexAttribPointer(positionLocation, @size, @gl.FLOAT, false, 0, 0)
-    @gl.drawArrays(@gl.TRIANGLES, 0, @size * 3)
-
-  _initialize: (vertices, numTriangles) ->
-    @size = numTriangles
+  _initialize: (vertices) ->
+    @size = vertices.length
     @buffer = @gl.createBuffer()
     @gl.bindBuffer(@gl.ARRAY_BUFFER, @buffer)
     @gl.bufferData(@gl.ARRAY_BUFFER, vertices, @gl.STATIC_DRAW)

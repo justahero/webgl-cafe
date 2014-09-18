@@ -7,6 +7,7 @@ class @GlContext
 
   clearBuffer: (color = GlColor.WHITE) ->
     @gl.clearColor(color.red, color.green, color.blue, color.alpha)
+    @gl.enable(@gl.DEPTH_TEST)
     @gl.clear(@gl.COLOR_BUFFER_BIT)
 
   useProgram: (program) ->
