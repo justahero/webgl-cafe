@@ -2,18 +2,34 @@
 
 shaders =
   'main_vertex': """
-                 attribute vec3 vertexPos;
+                 attribute highp vec3 vertexPos;
+                 attribute highp vec3 normalPos;
 
-                 uniform mat4 modelViewMatrix;
-                 uniform mat4 projectionMatrix;
+                 uniform highp mat4 modelViewMatrix;
+                 uniform highp mat4 projectionMatrix;
+                 uniform highp mat4 normalMatrix;
+
+                 varying highp vec3 vLighting;
 
                  void main(void) {
                      gl_Position = projectionMatrix * modelViewMatrix * vec4(vertexPos, 1);
+                     // apply lighting effect
+                     highp vec3 ambientLight = vec3(0.5, 0.5, 0.5);
+                     highp vec3 directionalLightColor = vec3(0.5, 0.5, 0.75);
+                     highp vec3 directionalVector = vec3(0.85, 0.80, 0.75);
+
+                     highp vec4 transformedNormal = normalMatrix * vec4(normalPos, 1.0);
+
+                     highp float directional = max(dot(transformedNormal.xyz, directionalVector), 0.0);
+                     vLighting = ambientLight + (directionalLightColor * directional);
                  }
                  """
   'main_fragment': """
+                   varying highp vec3 vLighting;
+
                    void main(void) {
-                       gl_FragColor = vec4(0.0, 0.0, 1.0, 1.0);
+                       highp vec3 color = vec3(0.0, 0.0, 1.0);
+                       gl_FragColor = vec4(color * vLighting, 1.0);
                    }
                    """
 
@@ -23,11 +39,13 @@ context = null
 modelViewMatrix  = null
 projectionMatrix = null
 
-indexBuffer = null
-vertexBuffer  = null
+indexBuffer  = null
+vertexBuffer = null
+normalBuffer = null
 
 program = null
 shaderVertexPositionAttribute = null
+shaderNormalPositionAttribute = null
 shaderProjectionMatrixUniform = null
 shaderModelViewMatrixUniform  = null
 
@@ -62,6 +80,8 @@ render = (context, canvas) ->
   context.gl.enableVertexAttribArray(shaderVertexPositionAttribute)
   context.gl.bindBuffer(context.gl.ARRAY_BUFFER, vertexBuffer.buffer)
   context.gl.vertexAttribPointer(shaderVertexPositionAttribute, 3, context.gl.FLOAT, false, 0, 0)
+  context.gl.bindBuffer(context.gl.ARRAY_BUFFER, normalBuffer.buffer)
+  context.gl.vertexAttribPointer(shaderNormalPositionAttribute, 3, context.gl.FLOAT, false, 0, 0)
   context.gl.bindBuffer(context.gl.ELEMENT_ARRAY_BUFFER, indexBuffer.buffer)
 
   context.gl.uniformMatrix4fv(shaderProjectionMatrixUniform, false, projectionMatrix);
@@ -89,6 +109,8 @@ renderLoop = (context, canvas) ->
 
   shaderVertexPositionAttribute = program.getAttribLocation("vertexPos")
   gl.enableVertexAttribArray(shaderVertexPositionAttribute)
+  shaderNormalPositionAttribute = program.getAttribLocation("normalPos")
+  gl.enableVertexAttribArray(shaderNormalPositionAttribute)
   shaderProjectionMatrixUniform = program.uniformLocation("projectionMatrix")
   shaderModelViewMatrixUniform  = program.uniformLocation("modelViewMatrix")
 
@@ -123,7 +145,40 @@ renderLoop = (context, canvas) ->
     -1.0,  1.0,  1.0,
     -1.0,  1.0, -1.0,
   ])
-  vertexBuffer = new VertexBuffer(context.gl, vertices)
+  vertexBuffer = new VertexBuffer(context.gl, vertices, 3)
+
+  normals = new Float32Array([
+     0.0,  0.0,  1.0,
+     0.0,  0.0,  1.0,
+     0.0,  0.0,  1.0,
+     0.0,  0.0,  1.0,
+
+     0.0,  0.0, -1.0,
+     0.0,  0.0, -1.0,
+     0.0,  0.0, -1.0,
+     0.0,  0.0, -1.0,
+
+     0.0,  1.0,  0.0,
+     0.0,  1.0,  0.0,
+     0.0,  1.0,  0.0,
+     0.0,  1.0,  0.0,
+
+     0.0, -1.0,  0.0,
+     0.0, -1.0,  0.0,
+     0.0, -1.0,  0.0,
+     0.0, -1.0,  0.0,
+
+     1.0,  0.0,  0.0,
+     1.0,  0.0,  0.0,
+     1.0,  0.0,  0.0,
+     1.0,  0.0,  0.0,
+
+    -1.0,  0.0,  0.0,
+    -1.0,  0.0,  0.0,
+    -1.0,  0.0,  0.0,
+    -1.0,  0.0,  0.0,
+  ])
+  normalBuffer = new VertexBuffer(context.gl, normals, 3)
 
   indices = new Uint16Array([
      0,  1,  2,    0,  2,  3,   # Front face
