@@ -1,3 +1,7 @@
+# Most of the functionality is taken from the great WebGL introduction by thoughtbot
+# -> robots.thoughtbot.com/an-introduction-to-webgl
+#
+
 class @WebGlCompiler
   constructor: (@gl, @shaders) ->
 
@@ -13,25 +17,7 @@ class @WebGlCompiler
     @_compileShader(shaderSource, shaderType)
 
   _compileShader: (shaderSource, shaderType) ->
-    console.log("Comiling shader: \n#{shaderSource}")
-    shader = @gl.createShader(shaderType)
-    @gl.shaderSource(shader, shaderSource)
-    @gl.compileShader(shader)
-
-    unless @gl.getShaderParameter(shader, @gl.COMPILE_STATUS)
-      error = @gl.getShaderInfoLog(shader)
-      throw "Could not compile shader, error: #{error}"
-
-    shader
+    new Shader(@gl, shaderSource, shaderType)
 
   _createProgram: (vertexShader, fragmentShader) ->
-    program = @gl.createProgram()
-    @gl.attachShader(program, vertexShader)
-    @gl.attachShader(program, fragmentShader)
-    @gl.linkProgram(program)
-
-    unless @gl.getProgramParameter(program, @gl.LINK_STATUS)
-      error = @gl.getProgramInfoLog(program)
-      throw "Could not compile program, error: #{error}"
-
-    program
+    new Program(@gl, vertexShader, fragmentShader)
