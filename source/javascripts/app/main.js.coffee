@@ -38,6 +38,7 @@ context = null
 
 modelViewMatrix  = null
 projectionMatrix = null
+normalMatrix     = null
 
 indexBuffer  = null
 vertexBuffer = null
@@ -46,8 +47,10 @@ normalBuffer = null
 program = null
 shaderVertexPositionAttribute = null
 shaderNormalPositionAttribute = null
+
 shaderProjectionMatrixUniform = null
 shaderModelViewMatrixUniform  = null
+shaderNormalMatrixUniform     = null
 
 duration = 5000.0
 currentTime = Date.now()
@@ -58,6 +61,8 @@ initMatrices = (canvas) ->
 
   projectionMatrix = mat4.create()
   mat4.perspective(projectionMatrix, Math.PI / 3, canvas.width / canvas.height, 1, 10000)
+
+  normalMatrix = mat4.create()
 
 initViewport = (context, canvas) ->
   context.setViewport(0, 0, canvas.width, canvas.height)
@@ -73,11 +78,12 @@ animate = () ->
   mat4.rotate(modelViewMatrix, modelViewMatrix, angle, [0, 1, 1])
 
 render = (context, canvas) ->
-  context.clearBuffer(GlColor.BLACK)
+  context.clearBuffer(GlColor.WHITE)
 
   context.useProgram(program)
 
   context.gl.enableVertexAttribArray(shaderVertexPositionAttribute)
+  context.gl.enableVertexAttribArray(shaderNormalPositionAttribute)
   context.gl.bindBuffer(context.gl.ARRAY_BUFFER, vertexBuffer.buffer)
   context.gl.vertexAttribPointer(shaderVertexPositionAttribute, 3, context.gl.FLOAT, false, 0, 0)
   context.gl.bindBuffer(context.gl.ARRAY_BUFFER, normalBuffer.buffer)
@@ -86,6 +92,10 @@ render = (context, canvas) ->
 
   context.gl.uniformMatrix4fv(shaderProjectionMatrixUniform, false, projectionMatrix);
   context.gl.uniformMatrix4fv(shaderModelViewMatrixUniform, false, modelViewMatrix);
+
+  mat4.invert(normalMatrix, modelViewMatrix)
+  mat4.transpose(normalMatrix, normalMatrix)
+  context.gl.uniformMatrix4fv(shaderNormalMatrixUniform, false, normalMatrix)
 
   context.gl.drawElements(context.gl.TRIANGLES, indexBuffer.size, context.gl.UNSIGNED_SHORT, 0);
 
@@ -113,6 +123,7 @@ renderLoop = (context, canvas) ->
   gl.enableVertexAttribArray(shaderNormalPositionAttribute)
   shaderProjectionMatrixUniform = program.uniformLocation("projectionMatrix")
   shaderModelViewMatrixUniform  = program.uniformLocation("modelViewMatrix")
+  shaderNormalMatrixUniform     = program.uniformLocation("normalMatrix")
 
   vertices = new Float32Array([
     -1.0, -1.0,  1.0,
