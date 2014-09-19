@@ -45,8 +45,6 @@ vertexBuffer = null
 normalBuffer = null
 
 program = null
-shaderVertexPositionAttribute = null
-shaderNormalPositionAttribute = null
 
 duration = 5000.0
 currentTime = Date.now()
@@ -73,12 +71,9 @@ render = (context, canvas) ->
 
   context.useProgram(program)
 
-  context.gl.enableVertexAttribArray(shaderVertexPositionAttribute)
-  context.gl.enableVertexAttribArray(shaderNormalPositionAttribute)
-  context.gl.bindBuffer(context.gl.ARRAY_BUFFER, vertexBuffer.buffer)
-  context.gl.vertexAttribPointer(shaderVertexPositionAttribute, 3, context.gl.FLOAT, false, 0, 0)
-  context.gl.bindBuffer(context.gl.ARRAY_BUFFER, normalBuffer.buffer)
-  context.gl.vertexAttribPointer(shaderNormalPositionAttribute, 3, context.gl.FLOAT, false, 0, 0)
+  program.bindVertexBuffer("vertexPos", vertexBuffer)
+  program.bindVertexBuffer("normalPos", normalBuffer)
+
   context.gl.bindBuffer(context.gl.ELEMENT_ARRAY_BUFFER, indexBuffer.buffer)
 
   program.uniformMatrix4fv("projectionMatrix", projectionMatrix)
@@ -104,13 +99,6 @@ renderLoop = (context, canvas) ->
 
   compiler = new WebGlCompiler(context.gl, shaders)
   program  = compiler.createProgramWithShaders('main_vertex', 'main_fragment')
-
-  gl = context.gl
-
-  shaderVertexPositionAttribute = program.getAttribLocation("vertexPos")
-  gl.enableVertexAttribArray(shaderVertexPositionAttribute)
-  shaderNormalPositionAttribute = program.getAttribLocation("normalPos")
-  gl.enableVertexAttribArray(shaderNormalPositionAttribute)
 
   vertices = new Float32Array([
     -1.0, -1.0,  1.0,

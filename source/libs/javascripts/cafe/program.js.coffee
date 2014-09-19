@@ -10,6 +10,12 @@ class @Program
     uniform = @uniformLocation(uniformName)
     @gl.uniformMatrix4fv(uniform, false, matrix);
 
+  bindVertexBuffer: (attribName, vertexBuffer) ->
+    attribute = @getAttribLocation(attribName)
+    @gl.enableVertexAttribArray(attribute)
+    @gl.bindBuffer(@gl.ARRAY_BUFFER, vertexBuffer.buffer)
+    @gl.vertexAttribPointer(attribute, vertexBuffer.itemSize, @gl.FLOAT, false, 0, 0)
+
   getAttribLocation: (attribName) ->
     location = @gl.getAttribLocation(@program, attribName)
     if location == -1
