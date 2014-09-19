@@ -73,8 +73,7 @@ render = (context, canvas) ->
 
   program.bindVertexBuffer("vertexPos", vertexBuffer)
   program.bindVertexBuffer("normalPos", normalBuffer)
-
-  context.gl.bindBuffer(context.gl.ELEMENT_ARRAY_BUFFER, indexBuffer.buffer)
+  program.bindIndexBuffer(indexBuffer)
 
   program.uniformMatrix4fv("projectionMatrix", projectionMatrix)
   program.uniformMatrix4fv("modelViewMatrix", modelViewMatrix)

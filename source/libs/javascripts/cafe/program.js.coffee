@@ -16,6 +16,9 @@ class @Program
     @gl.bindBuffer(@gl.ARRAY_BUFFER, vertexBuffer.buffer)
     @gl.vertexAttribPointer(attribute, vertexBuffer.itemSize, @gl.FLOAT, false, 0, 0)
 
+  bindIndexBuffer: (indexBuffer) ->
+    @gl.bindBuffer(@gl.ELEMENT_ARRAY_BUFFER, indexBuffer.buffer)
+
   getAttribLocation: (attribName) ->
     location = @gl.getAttribLocation(@program, attribName)
     if location == -1
