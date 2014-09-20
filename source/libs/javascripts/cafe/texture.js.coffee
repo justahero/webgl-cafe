@@ -1,6 +1,7 @@
 namespace 'Cafe', (exports) ->
   class exports.Texture
     constructor: (gl, @filename) ->
+      @type    = gl.TEXTURE_2D
       @texture = gl.createTexture()
       @texture.image = new Image()
       @texture.image.onload = => @onTextureLoaded(gl, @texture)

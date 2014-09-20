@@ -96,9 +96,7 @@ render = (context, canvas) ->
   mat4.transpose(normalMatrix, normalMatrix)
   program.uniformMatrix4fv("normalMatrix", normalMatrix)
 
-  context.gl.activeTexture(context.gl.TEXTURE0)
-  context.gl.bindTexture(context.gl.TEXTURE_2D, texture.texture)
-  context.gl.uniform1i(context.gl.getUniformLocation(program.program, "uSampler"), 0)
+  program.bindTexture("uSampler", texture)
 
   context.drawTriangles(indexBuffer.size)
 
