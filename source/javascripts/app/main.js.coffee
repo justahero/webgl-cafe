@@ -49,6 +49,8 @@ program = null
 duration = 5000.0
 currentTime = Date.now()
 
+myCube = Primitives.Cube.create(1.2)
+
 initMatrices = (canvas) ->
   mat4.translate(modelViewMatrix, modelViewMatrix, [0, 0, -5])
   mat4.perspective(projectionMatrix, Math.PI / 3, canvas.width / canvas.height, 1, 10000)
@@ -96,80 +98,8 @@ renderLoop = (context, canvas) ->
   compiler = new WebGlCompiler(context.gl, shaders)
   program  = compiler.createProgramWithShaders('main_vertex', 'main_fragment')
 
-  vertices = new Float32Array([
-    -1.0, -1.0,  1.0,
-     1.0, -1.0,  1.0,
-     1.0,  1.0,  1.0,
-    -1.0,  1.0,  1.0,
-
-    -1.0, -1.0, -1.0,
-    -1.0,  1.0, -1.0,
-     1.0,  1.0, -1.0,
-     1.0, -1.0, -1.0,
-
-    -1.0,  1.0, -1.0,
-    -1.0,  1.0,  1.0,
-     1.0,  1.0,  1.0,
-     1.0,  1.0, -1.0,
-
-    -1.0, -1.0, -1.0,
-     1.0, -1.0, -1.0,
-     1.0, -1.0,  1.0,
-    -1.0, -1.0,  1.0,
-
-     1.0, -1.0, -1.0,
-     1.0,  1.0, -1.0,
-     1.0,  1.0,  1.0,
-     1.0, -1.0,  1.0,
-
-    -1.0, -1.0, -1.0,
-    -1.0, -1.0,  1.0,
-    -1.0,  1.0,  1.0,
-    -1.0,  1.0, -1.0,
-  ])
-  vertexBuffer = new VertexBuffer(context.gl, vertices, 3)
-
-  normals = new Float32Array([
-     0.0,  0.0,  1.0,
-     0.0,  0.0,  1.0,
-     0.0,  0.0,  1.0,
-     0.0,  0.0,  1.0,
-
-     0.0,  0.0, -1.0,
-     0.0,  0.0, -1.0,
-     0.0,  0.0, -1.0,
-     0.0,  0.0, -1.0,
-
-     0.0,  1.0,  0.0,
-     0.0,  1.0,  0.0,
-     0.0,  1.0,  0.0,
-     0.0,  1.0,  0.0,
-
-     0.0, -1.0,  0.0,
-     0.0, -1.0,  0.0,
-     0.0, -1.0,  0.0,
-     0.0, -1.0,  0.0,
-
-     1.0,  0.0,  0.0,
-     1.0,  0.0,  0.0,
-     1.0,  0.0,  0.0,
-     1.0,  0.0,  0.0,
-
-    -1.0,  0.0,  0.0,
-    -1.0,  0.0,  0.0,
-    -1.0,  0.0,  0.0,
-    -1.0,  0.0,  0.0,
-  ])
-  normalBuffer = new VertexBuffer(context.gl, normals, 3)
-
-  indices = new Uint16Array([
-     0,  1,  2,    0,  2,  3,   # Front face
-     4,  5,  6,    4,  6,  7,   # Back face
-     8,  9, 10,    8, 10, 11,   # Top face
-    12, 13, 14,   12, 14, 15,   # Bottom face
-    16, 17, 18,   16, 18, 19,   # Right face
-    20, 21, 22,   20, 22, 23    # Left face
-  ])
-  indexBuffer = new IndexBuffer(context.gl, indices)
+  vertexBuffer = new VertexBuffer(context.gl, myCube.vertices, 3)
+  normalBuffer = new VertexBuffer(context.gl, myCube.normals, 3)
+  indexBuffer  = new IndexBuffer(context.gl, myCube.indices)
 
   renderLoop(context, canvas)
