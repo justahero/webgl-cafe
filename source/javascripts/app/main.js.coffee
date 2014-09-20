@@ -16,8 +16,8 @@ shaders =
                  void main(void) {
                      gl_Position = projectionMatrix * modelViewMatrix * vec4(vertexPos, 1);
                      // apply lighting effect
-                     highp vec3 ambientLight = vec3(0.5, 0.5, 0.5);
-                     highp vec3 directionalLightColor = vec3(0.5, 0.5, 0.75);
+                     highp vec3 ambientLight = vec3(0.3, 0.3, 0.3);
+                     highp vec3 directionalLightColor = vec3(0.75, 0.75, 0.75);
                      highp vec3 directionalVector = vec3(0.85, 0.80, 0.75);
 
                      highp vec4 transformedNormal = normalMatrix * vec4(normalPos, 1.0);
@@ -32,9 +32,12 @@ shaders =
                    varying highp vec2 vTextureCoord;
                    varying highp vec3 vLighting;
 
+                   uniform sampler2D uSampler;
+
                    void main(void) {
-                       highp vec3 color = vec3(0.0, 0.0, 1.0);
-                       gl_FragColor = vec4(color * vLighting, 1.0);
+                       mediump vec4 texelColor = texture2D(uSampler, vec2(vTextureCoord.s, vTextureCoord.t));
+
+                       gl_FragColor = vec4(texelColor.rgb * vLighting, 1.0);
                    }
                    """
 
@@ -50,12 +53,18 @@ texcoordsBuffer = null
 vertexBuffer    = null
 normalBuffer    = null
 
+texture = null
+
 program = null
 
 duration = 5000.0
 currentTime = Date.now()
 
 myCube = Cafe.Primitives.Cube.create(1.2)
+
+
+initTextures = (context) ->
+  texture = new Cafe.Texture(context.gl, 'resources/images/water512.jpg')
 
 initMatrices = (canvas) ->
   mat4.translate(modelViewMatrix, modelViewMatrix, [0, 0, -5])
@@ -87,6 +96,10 @@ render = (context, canvas) ->
   mat4.transpose(normalMatrix, normalMatrix)
   program.uniformMatrix4fv("normalMatrix", normalMatrix)
 
+  context.gl.activeTexture(context.gl.TEXTURE0)
+  context.gl.bindTexture(context.gl.TEXTURE_2D, texture.texture)
+  context.gl.uniform1i(context.gl.getUniformLocation(program.program, "uSampler"), 0)
+
   context.drawTriangles(indexBuffer.size)
 
 
@@ -100,6 +113,8 @@ renderLoop = (context, canvas) ->
   context = new Cafe.Context(canvas)
 
   context.setViewport(0, 0, canvas.width, canvas.height)
+
+  initTextures(context)
   initMatrices(canvas)
 
   compiler = new Cafe.WebGlCompiler(context.gl, shaders)
