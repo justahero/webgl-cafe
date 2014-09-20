@@ -1,6 +1,6 @@
 #= require helpers/namespace
 
-namespace 'Primitives', (exports) ->
+namespace 'Cafe.Primitives', (exports) ->
   class exports.Cube
     @create: (size = 1.0) ->
       new Cube(size)
