@@ -10,6 +10,9 @@ class @GlContext
     @gl.enable(@gl.DEPTH_TEST)
     @gl.clear(@gl.COLOR_BUFFER_BIT)
 
+  drawTriangles: (count, offset = 0) ->
+    @gl.drawElements(@gl.TRIANGLES, count, @gl.UNSIGNED_SHORT, offset * 2)
+
   useProgram: (program) ->
     @gl.useProgram(program.program)
 

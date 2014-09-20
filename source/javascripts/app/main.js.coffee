@@ -36,36 +36,22 @@ shaders =
 canvas  = null
 context = null
 
-modelViewMatrix  = null
-projectionMatrix = null
-normalMatrix     = null
+modelViewMatrix  = mat4.create()
+projectionMatrix = mat4.create()
+normalMatrix     = mat4.create()
 
 indexBuffer  = null
 vertexBuffer = null
 normalBuffer = null
 
 program = null
-shaderVertexPositionAttribute = null
-shaderNormalPositionAttribute = null
-
-shaderProjectionMatrixUniform = null
-shaderModelViewMatrixUniform  = null
-shaderNormalMatrixUniform     = null
 
 duration = 5000.0
 currentTime = Date.now()
 
 initMatrices = (canvas) ->
-  modelViewMatrix = mat4.create()
   mat4.translate(modelViewMatrix, modelViewMatrix, [0, 0, -5])
-
-  projectionMatrix = mat4.create()
   mat4.perspective(projectionMatrix, Math.PI / 3, canvas.width / canvas.height, 1, 10000)
-
-  normalMatrix = mat4.create()
-
-initViewport = (context, canvas) ->
-  context.setViewport(0, 0, canvas.width, canvas.height)
 
 animate = () ->
   now = Date.now()
@@ -82,22 +68,17 @@ render = (context, canvas) ->
 
   context.useProgram(program)
 
-  context.gl.enableVertexAttribArray(shaderVertexPositionAttribute)
-  context.gl.enableVertexAttribArray(shaderNormalPositionAttribute)
-  context.gl.bindBuffer(context.gl.ARRAY_BUFFER, vertexBuffer.buffer)
-  context.gl.vertexAttribPointer(shaderVertexPositionAttribute, 3, context.gl.FLOAT, false, 0, 0)
-  context.gl.bindBuffer(context.gl.ARRAY_BUFFER, normalBuffer.buffer)
-  context.gl.vertexAttribPointer(shaderNormalPositionAttribute, 3, context.gl.FLOAT, false, 0, 0)
-  context.gl.bindBuffer(context.gl.ELEMENT_ARRAY_BUFFER, indexBuffer.buffer)
+  program.bindVertexBuffer("vertexPos", vertexBuffer)
+  program.bindVertexBuffer("normalPos", normalBuffer)
+  program.bindIndexBuffer(indexBuffer)
 
-  context.gl.uniformMatrix4fv(shaderProjectionMatrixUniform, false, projectionMatrix);
-  context.gl.uniformMatrix4fv(shaderModelViewMatrixUniform, false, modelViewMatrix);
-
+  program.uniformMatrix4fv("projectionMatrix", projectionMatrix)
+  program.uniformMatrix4fv("modelViewMatrix", modelViewMatrix)
   mat4.invert(normalMatrix, modelViewMatrix)
   mat4.transpose(normalMatrix, normalMatrix)
-  context.gl.uniformMatrix4fv(shaderNormalMatrixUniform, false, normalMatrix)
+  program.uniformMatrix4fv("normalMatrix", normalMatrix)
 
-  context.gl.drawElements(context.gl.TRIANGLES, indexBuffer.size, context.gl.UNSIGNED_SHORT, 0);
+  context.drawTriangles(indexBuffer.size)
 
 
 renderLoop = (context, canvas) ->
@@ -109,21 +90,11 @@ renderLoop = (context, canvas) ->
   canvas  = document.getElementById('webglcanvas')
   context = new GlContext(canvas)
 
-  initViewport(context, canvas)
+  context.setViewport(0, 0, canvas.width, canvas.height)
   initMatrices(canvas)
 
   compiler = new WebGlCompiler(context.gl, shaders)
   program  = compiler.createProgramWithShaders('main_vertex', 'main_fragment')
-
-  gl = context.gl
-
-  shaderVertexPositionAttribute = program.getAttribLocation("vertexPos")
-  gl.enableVertexAttribArray(shaderVertexPositionAttribute)
-  shaderNormalPositionAttribute = program.getAttribLocation("normalPos")
-  gl.enableVertexAttribArray(shaderNormalPositionAttribute)
-  shaderProjectionMatrixUniform = program.uniformLocation("projectionMatrix")
-  shaderModelViewMatrixUniform  = program.uniformLocation("modelViewMatrix")
-  shaderNormalMatrixUniform     = program.uniformLocation("normalMatrix")
 
   vertices = new Float32Array([
     -1.0, -1.0,  1.0,

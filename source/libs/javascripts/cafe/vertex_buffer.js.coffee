@@ -1,12 +1,12 @@
 class @VertexBuffer
-  constructor: (@gl, vertices, item_size) ->
+  constructor: (@gl, vertices, itemSize) ->
     @size      = 0
     @buffer    = null
-    @item_size = item_size
+    @itemSize = itemSize
     @_initialize(vertices)
 
   _initialize: (vertices) ->
-    @size   = vertices.length / @item_size
+    @size   = vertices.length / @itemSize
     @buffer = @gl.createBuffer()
     @gl.bindBuffer(@gl.ARRAY_BUFFER, @buffer)
     @gl.bufferData(@gl.ARRAY_BUFFER, vertices, @gl.STATIC_DRAW)
