@@ -9,6 +9,7 @@ set :js_dir,     'javascripts'
 set :images_dir, 'images'
 
 sprockets.append_path "libs/javascripts"
+sprockets.append_path "resources"
 sprockets.append_path "vendor"
 
 configure :development do

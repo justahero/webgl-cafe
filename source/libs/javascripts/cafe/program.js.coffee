@@ -20,6 +20,12 @@ namespace 'Cafe', (exports) ->
     bindIndexBuffer: (indexBuffer) ->
       @gl.bindBuffer(@gl.ELEMENT_ARRAY_BUFFER, indexBuffer.buffer)
 
+    bindTexture: (uniformName, texture) ->
+      uniform = @uniformLocation(uniformName)
+      @gl.activeTexture(@gl.TEXTURE0)
+      @gl.bindTexture(texture.type, texture.texture)
+      @gl.uniform1i(uniform, 0)
+
     getAttribLocation: (attribName) ->
       location = @gl.getAttribLocation(@program, attribName)
       if location == -1

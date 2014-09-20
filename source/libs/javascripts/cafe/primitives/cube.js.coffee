@@ -1,14 +1,13 @@
-#= require helpers/namespace
-
 namespace 'Cafe.Primitives', (exports) ->
   class exports.Cube
     @create: (size = 1.0) ->
       new Cube(size)
 
     constructor: (size, position) ->
-      @vertices = @_createVertices(size)
-      @normals  = @_createNormals()
-      @indices  = @_createIndices()
+      @vertices  = @_createVertices(size)
+      @texcoords = @_createTextureCoords()
+      @normals   = @_createNormals()
+      @indices   = @_createIndices()
 
     _createVertices: (size) ->
       vertices = new Float32Array([
@@ -41,6 +40,39 @@ namespace 'Cafe.Primitives', (exports) ->
         -size, -size,  size,
         -size,  size,  size,
         -size,  size, -size,
+      ])
+
+    _createTextureCoords: ->
+      textureCoordinates = new Float32Array([
+        0.0,  0.0,
+        1.0,  0.0,
+        1.0,  1.0,
+        0.0,  1.0,
+
+        0.0,  0.0,
+        1.0,  0.0,
+        1.0,  1.0,
+        0.0,  1.0,
+
+        0.0,  0.0,
+        1.0,  0.0,
+        1.0,  1.0,
+        0.0,  1.0,
+
+        0.0,  0.0,
+        1.0,  0.0,
+        1.0,  1.0,
+        0.0,  1.0,
+
+        0.0,  0.0,
+        1.0,  0.0,
+        1.0,  1.0,
+        0.0,  1.0,
+
+        0.0,  0.0,
+        1.0,  0.0,
+        1.0,  1.0,
+        0.0,  1.0
       ])
 
     _createNormals: ->
