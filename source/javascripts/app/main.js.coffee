@@ -110,8 +110,6 @@ renderLoop = (context, canvas) ->
   canvas  = document.getElementById('webglcanvas')
   context = new Cafe.Context(canvas)
 
-  context.setViewport(0, 0, canvas.width, canvas.height)
-
   initTextures(context)
   initMatrices(canvas)
 

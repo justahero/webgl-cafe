@@ -2,6 +2,7 @@ namespace 'Cafe', (exports) ->
   class exports.Context
     constructor: (canvas) ->
       @gl = WebGLDebugUtils.makeDebugContext(@_initGlContext(canvas))
+      @setViewport(0, 0, canvas.width, canvas.height)
 
     setViewport: (x, y, width, height) ->
       @gl.viewport(x, y, width, height)
