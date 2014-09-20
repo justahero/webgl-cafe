@@ -49,7 +49,7 @@ program = null
 duration = 5000.0
 currentTime = Date.now()
 
-myCube = Primitives.Cube.create(1.2)
+myCube = Cafe.Primitives.Cube.create(1.2)
 
 initMatrices = (canvas) ->
   mat4.translate(modelViewMatrix, modelViewMatrix, [0, 0, -5])
@@ -66,7 +66,7 @@ animate = () ->
   mat4.rotate(modelViewMatrix, modelViewMatrix, angle, [0, 1, 1])
 
 render = (context, canvas) ->
-  context.clearBuffer(GlColor.WHITE)
+  context.clearBuffer(Cafe.Color.WHITE)
 
   context.useProgram(program)
 
@@ -90,16 +90,16 @@ renderLoop = (context, canvas) ->
 
 @main = ->
   canvas  = document.getElementById('webglcanvas')
-  context = new GlContext(canvas)
+  context = new Cafe.Context(canvas)
 
   context.setViewport(0, 0, canvas.width, canvas.height)
   initMatrices(canvas)
 
-  compiler = new WebGlCompiler(context.gl, shaders)
+  compiler = new Cafe.WebGlCompiler(context.gl, shaders)
   program  = compiler.createProgramWithShaders('main_vertex', 'main_fragment')
 
-  vertexBuffer = new VertexBuffer(context.gl, myCube.vertices, 3)
-  normalBuffer = new VertexBuffer(context.gl, myCube.normals, 3)
-  indexBuffer  = new IndexBuffer(context.gl, myCube.indices)
+  vertexBuffer = new Cafe.VertexBuffer(context.gl, myCube.vertices, 3)
+  normalBuffer = new Cafe.VertexBuffer(context.gl, myCube.normals, 3)
+  indexBuffer  = new Cafe.IndexBuffer(context.gl, myCube.indices)
 
   renderLoop(context, canvas)
