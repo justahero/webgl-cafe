@@ -3,12 +3,14 @@
 shaders =
   'main_vertex': """
                  attribute highp vec3 vertexPos;
+                 attribute highp vec2 texCoord;
                  attribute highp vec3 normalPos;
 
                  uniform highp mat4 modelViewMatrix;
                  uniform highp mat4 projectionMatrix;
                  uniform highp mat4 normalMatrix;
 
+                 varying highp vec2 vTextureCoord;
                  varying highp vec3 vLighting;
 
                  void main(void) {
@@ -21,10 +23,13 @@ shaders =
                      highp vec4 transformedNormal = normalMatrix * vec4(normalPos, 1.0);
 
                      highp float directional = max(dot(transformedNormal.xyz, directionalVector), 0.0);
+
                      vLighting = ambientLight + (directionalLightColor * directional);
+                     vTextureCoord = texCoord;
                  }
                  """
   'main_fragment': """
+                   varying highp vec2 vTextureCoord;
                    varying highp vec3 vLighting;
 
                    void main(void) {
@@ -40,9 +45,10 @@ modelViewMatrix  = mat4.create()
 projectionMatrix = mat4.create()
 normalMatrix     = mat4.create()
 
-indexBuffer  = null
-vertexBuffer = null
-normalBuffer = null
+indexBuffer     = null
+texcoordsBuffer = null
+vertexBuffer    = null
+normalBuffer    = null
 
 program = null
 
@@ -71,6 +77,7 @@ render = (context, canvas) ->
   context.useProgram(program)
 
   program.bindVertexBuffer("vertexPos", vertexBuffer)
+  program.bindVertexBuffer("texCoord", texcoordsBuffer)
   program.bindVertexBuffer("normalPos", normalBuffer)
   program.bindIndexBuffer(indexBuffer)
 
@@ -98,8 +105,9 @@ renderLoop = (context, canvas) ->
   compiler = new Cafe.WebGlCompiler(context.gl, shaders)
   program  = compiler.createProgramWithShaders('main_vertex', 'main_fragment')
 
-  vertexBuffer = new Cafe.VertexBuffer(context.gl, myCube.vertices, 3)
-  normalBuffer = new Cafe.VertexBuffer(context.gl, myCube.normals, 3)
-  indexBuffer  = new Cafe.IndexBuffer(context.gl, myCube.indices)
+  vertexBuffer    = new Cafe.VertexBuffer(context.gl, myCube.vertices, 3)
+  texcoordsBuffer = new Cafe.VertexBuffer(context.gl, myCube.texcoords, 2)
+  normalBuffer    = new Cafe.VertexBuffer(context.gl, myCube.normals, 3)
+  indexBuffer     = new Cafe.IndexBuffer(context.gl, myCube.indices)
 
   renderLoop(context, canvas)
