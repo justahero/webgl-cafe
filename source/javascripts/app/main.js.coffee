@@ -53,9 +53,6 @@ initMatrices = (canvas) ->
   mat4.translate(modelViewMatrix, modelViewMatrix, [0, 0, -5])
   mat4.perspective(projectionMatrix, Math.PI / 3, canvas.width / canvas.height, 1, 10000)
 
-initViewport = (context, canvas) ->
-  context.setViewport(0, 0, canvas.width, canvas.height)
-
 animate = () ->
   now = Date.now()
   deltat = now - currentTime
@@ -81,7 +78,7 @@ render = (context, canvas) ->
   mat4.transpose(normalMatrix, normalMatrix)
   program.uniformMatrix4fv("normalMatrix", normalMatrix)
 
-  context.gl.drawElements(context.gl.TRIANGLES, indexBuffer.size, context.gl.UNSIGNED_SHORT, 0);
+  context.drawTriangles(indexBuffer.size)
 
 
 renderLoop = (context, canvas) ->
@@ -93,7 +90,7 @@ renderLoop = (context, canvas) ->
   canvas  = document.getElementById('webglcanvas')
   context = new GlContext(canvas)
 
-  initViewport(context, canvas)
+  context.setViewport(0, 0, canvas.width, canvas.height)
   initMatrices(canvas)
 
   compiler = new WebGlCompiler(context.gl, shaders)
