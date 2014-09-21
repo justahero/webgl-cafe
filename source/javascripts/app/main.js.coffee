@@ -65,8 +65,6 @@ program = null
 duration = 5000.0
 currentTime = Date.now()
 
-myCube = Cafe.Primitives.Cube.create(1.2)
-
 
 initTextures = (context) ->
   texture = new Cafe.Texture(context.gl, 'resources/images/water512.jpg')
@@ -74,6 +72,17 @@ initTextures = (context) ->
 initMatrices = (canvas) ->
   mat4.translate(modelViewMatrix, modelViewMatrix, [0, 0, -5])
   mat4.perspective(projectionMatrix, Math.PI / 3, canvas.width / canvas.height, 1, 10000)
+
+initMesh = (context) ->
+  myCube = Cafe.Primitives.Cube.create(1.2)
+  vertexBuffer    = new Cafe.VertexBuffer(context.gl, myCube.vertices, 3)
+  texcoordsBuffer = new Cafe.VertexBuffer(context.gl, myCube.texcoords, 2)
+  normalBuffer    = new Cafe.VertexBuffer(context.gl, myCube.normals, 3)
+  indexBuffer     = new Cafe.IndexBuffer(context.gl, myCube.indices)
+
+initShaders = (context) ->
+  compiler = new Cafe.WebGlCompiler(context.gl, shaders)
+  program  = compiler.createProgramWithShaders('main_vertex', 'main_fragment')
 
 animate = () ->
   now = Date.now()
@@ -84,6 +93,9 @@ animate = () ->
   angle = Math.PI * 2.0 * fract
 
   mat4.rotate(modelViewMatrix, modelViewMatrix, angle, [0, 1, 1])
+
+  mat4.invert(normalMatrix, modelViewMatrix)
+  mat4.transpose(normalMatrix, normalMatrix)
 
 render = (context, canvas) ->
   context.clearBuffer(Cafe.Color.WHITE)
@@ -97,8 +109,6 @@ render = (context, canvas) ->
 
   program.uniformMatrix4fv("projectionMatrix", projectionMatrix)
   program.uniformMatrix4fv("modelViewMatrix", modelViewMatrix)
-  mat4.invert(normalMatrix, modelViewMatrix)
-  mat4.transpose(normalMatrix, normalMatrix)
   program.uniformMatrix4fv("normalMatrix", normalMatrix)
 
   program.uniform3f("ambientColor", ambientColor)
@@ -118,15 +128,9 @@ renderLoop = (context, canvas) ->
   canvas  = document.getElementById('webglcanvas')
   context = new Cafe.Context(canvas)
 
-  initTextures(context)
   initMatrices(canvas)
-
-  compiler = new Cafe.WebGlCompiler(context.gl, shaders)
-  program  = compiler.createProgramWithShaders('main_vertex', 'main_fragment')
-
-  vertexBuffer    = new Cafe.VertexBuffer(context.gl, myCube.vertices, 3)
-  texcoordsBuffer = new Cafe.VertexBuffer(context.gl, myCube.texcoords, 2)
-  normalBuffer    = new Cafe.VertexBuffer(context.gl, myCube.normals, 3)
-  indexBuffer     = new Cafe.IndexBuffer(context.gl, myCube.indices)
+  initTextures(context)
+  initShaders(context)
+  initMesh(context)
 
   renderLoop(context, canvas)
