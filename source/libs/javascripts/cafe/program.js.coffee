@@ -11,6 +11,14 @@ namespace 'Cafe', (exports) ->
       uniform = @uniformLocation(uniformName)
       @gl.uniformMatrix4fv(uniform, false, matrix);
 
+    uniform3f: (uniformName, color) ->
+      uniform = @uniformLocation(uniformName)
+      @gl.uniform3f(uniform, color.red, color.green, color.blue)
+
+    uniform3fv: (uniformName, vector) ->
+      uniform = @uniformLocation(uniformName)
+      @gl.uniform3fv(uniform, vector)
+
     bindVertexBuffer: (attribName, vertexBuffer) ->
       attribute = @getAttribLocation(attribName)
       @gl.enableVertexAttribArray(attribute)
