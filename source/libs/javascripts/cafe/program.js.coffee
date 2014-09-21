@@ -46,6 +46,18 @@ namespace 'Cafe', (exports) ->
          throw "Could not getUniformLocation for #{attribName}"
       location
 
+    numAttributes: () ->
+      @_attributes.length
+
+    numUniforms: () ->
+      @_uniforms.length
+
+    getAttribute: (index) ->
+      @_attributes[index]
+
+    getUniform: (index) ->
+      @_uniforms[index]
+
     _link: (gl) ->
       @program = gl.createProgram()
       gl.attachShader(@program, @vertexShader.shader)
