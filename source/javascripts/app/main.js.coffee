@@ -10,21 +10,21 @@ shaders =
                  uniform highp mat4 projectionMatrix;
                  uniform highp mat4 normalMatrix;
 
+                 uniform vec3 ambientColor;
+                 uniform vec3 directionalColor;
+                 uniform vec3 directionalVector;
+
                  varying highp vec2 vTextureCoord;
                  varying highp vec3 vLighting;
 
                  void main(void) {
                      gl_Position = projectionMatrix * modelViewMatrix * vec4(vertexPos, 1);
+
                      // apply lighting effect
-                     highp vec3 ambientLight = vec3(0.3, 0.3, 0.3);
-                     highp vec3 directionalLightColor = vec3(0.75, 0.75, 0.75);
-                     highp vec3 directionalVector = vec3(0.85, 0.80, 0.75);
-
                      highp vec4 transformedNormal = normalMatrix * vec4(normalPos, 1.0);
-
                      highp float directional = max(dot(transformedNormal.xyz, directionalVector), 0.0);
 
-                     vLighting = ambientLight + (directionalLightColor * directional);
+                     vLighting = ambientColor + (directionalColor * directional);
                      vTextureCoord = texCoord;
                  }
                  """
@@ -54,6 +54,11 @@ vertexBuffer    = null
 normalBuffer    = null
 
 texture = null
+ambientColor = new Cafe.Color(0.3, 0.3, 0.3)
+direction = vec3.fromValues(0.5, 1, 1)
+directionalLight = new Cafe.DirectionalLight(
+  new Cafe.Color(0.8, 1.0, 0.8), vec3.normalize(direction, direction)
+)
 
 program = null
 
@@ -96,6 +101,9 @@ render = (context, canvas) ->
   mat4.transpose(normalMatrix, normalMatrix)
   program.uniformMatrix4fv("normalMatrix", normalMatrix)
 
+  program.uniform3f("ambientColor", ambientColor)
+  program.uniform3f("directionalColor", directionalLight.color)
+  program.uniform3fv("directionalVector", directionalLight.direction)
   program.bindTexture("uSampler", texture)
 
   context.drawTriangles(indexBuffer.size)
