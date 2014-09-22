@@ -49,11 +49,6 @@ normalMatrix     = mat4.create()
 
 mesh = new Cafe.Mesh()
 
-indexBuffer     = null
-texcoordsBuffer = null
-vertexBuffer    = null
-normalBuffer    = null
-
 texture = null
 ambientColor = new Cafe.Color(0.3, 0.3, 0.3)
 direction = vec3.fromValues(0.5, 1, 1)
@@ -76,10 +71,10 @@ initMatrices = (canvas) ->
 
 initMeshes = (context) ->
   cube = Cafe.Primitives.Cube.create(1.2)
-  vertexBuffer    = new Cafe.VertexBuffer(context.gl, cube.vertices, 3)
-  texcoordsBuffer = new Cafe.VertexBuffer(context.gl, cube.texcoords, 2)
-  normalBuffer    = new Cafe.VertexBuffer(context.gl, cube.normals, 3)
-  indexBuffer     = new Cafe.IndexBuffer(context.gl, cube.indices)
+  mesh.addVertexBuffer("vertexPos", new Cafe.VertexBuffer(context.gl, cube.vertices, 3))
+  mesh.addVertexBuffer("texCoord", new Cafe.VertexBuffer(context.gl, cube.texcoords, 2))
+  mesh.addVertexBuffer("normalPos", new Cafe.VertexBuffer(context.gl, cube.normals, 3))
+  mesh.setIndexBuffer(new Cafe.IndexBuffer(context.gl, cube.indices))
 
 initShaders = (context) ->
   compiler = new Cafe.WebGlCompiler(context.gl, shaders)
@@ -103,10 +98,7 @@ render = (context, canvas) ->
 
   context.useProgram(program)
 
-  program.bindVertexBuffer("vertexPos", vertexBuffer)
-  program.bindVertexBuffer("texCoord", texcoordsBuffer)
-  program.bindVertexBuffer("normalPos", normalBuffer)
-  program.bindIndexBuffer(indexBuffer)
+  program.bindMesh(mesh)
 
   program.uniformMatrix4fv("projectionMatrix", projectionMatrix)
   program.uniformMatrix4fv("modelViewMatrix", mesh.modelMatrix)
@@ -117,8 +109,7 @@ render = (context, canvas) ->
   program.uniform3fv("directionalVector", directionalLight.direction)
   program.bindTexture("uSampler", texture)
 
-  context.drawTriangles(indexBuffer.size)
-
+  context.drawTriangles(mesh.indexBuffer.size)
 
 renderLoop = (context, canvas) ->
   requestAnimationFrame(-> renderLoop(context, canvas))

@@ -1,18 +1,13 @@
 namespace 'Cafe', (exports) ->
   class exports.Mesh
     constructor: () ->
-      @vertexBuffers = {}
+      @vertexBuffers = []
       @indexBuffer   = null
       @modelMatrix   = mat4.create()
 
     addVertexBuffer: (name, vertexBuffer) ->
-      @vertexBuffers[name] = vertexBuffer
+      # @vertexBuffers[name] = vertexBuffer
+      @vertexBuffers.push {name: name, buffer: vertexBuffer}
 
     setIndexBuffer: (indexBuffer) ->
       @indexBuffer = indexBuffer
-
-    bind: (program) ->
-      for name, buffer in @vertexBuffers
-        program.bindVertexBuffer(name, buffer)
-      if @indexBuffer
-        program.bindIndexBuffer(@indexBuffer)

@@ -34,6 +34,12 @@ namespace 'Cafe', (exports) ->
       @gl.bindTexture(texture.type, texture.texture)
       @gl.uniform1i(uniform, 0)
 
+    bindMesh: (mesh) ->
+      for {name, buffer} in mesh.vertexBuffers
+        @bindVertexBuffer(name, buffer)
+      if mesh.indexBuffer
+        @bindIndexBuffer(mesh.indexBuffer)
+
     getAttribLocation: (attribName) ->
       location = @gl.getAttribLocation(@program, attribName)
       if location == -1
