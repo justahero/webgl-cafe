@@ -44,9 +44,10 @@ shaders =
 canvas  = null
 context = null
 
-modelViewMatrix  = mat4.create()
 projectionMatrix = mat4.create()
 normalMatrix     = mat4.create()
+
+mesh = new Cafe.Mesh()
 
 indexBuffer     = null
 texcoordsBuffer = null
@@ -70,15 +71,15 @@ initTextures = (context) ->
   texture = new Cafe.Texture(context.gl, 'resources/images/water512.jpg')
 
 initMatrices = (canvas) ->
-  mat4.translate(modelViewMatrix, modelViewMatrix, [0, 0, -5])
+  mat4.translate(mesh.modelMatrix, mesh.modelMatrix, [0, 0, -5])
   mat4.perspective(projectionMatrix, Math.PI / 3, canvas.width / canvas.height, 1, 10000)
 
 initMeshes = (context) ->
-  myCube = Cafe.Primitives.Cube.create(1.2)
-  vertexBuffer    = new Cafe.VertexBuffer(context.gl, myCube.vertices, 3)
-  texcoordsBuffer = new Cafe.VertexBuffer(context.gl, myCube.texcoords, 2)
-  normalBuffer    = new Cafe.VertexBuffer(context.gl, myCube.normals, 3)
-  indexBuffer     = new Cafe.IndexBuffer(context.gl, myCube.indices)
+  cube = Cafe.Primitives.Cube.create(1.2)
+  vertexBuffer    = new Cafe.VertexBuffer(context.gl, cube.vertices, 3)
+  texcoordsBuffer = new Cafe.VertexBuffer(context.gl, cube.texcoords, 2)
+  normalBuffer    = new Cafe.VertexBuffer(context.gl, cube.normals, 3)
+  indexBuffer     = new Cafe.IndexBuffer(context.gl, cube.indices)
 
 initShaders = (context) ->
   compiler = new Cafe.WebGlCompiler(context.gl, shaders)
@@ -92,9 +93,9 @@ animate = () ->
   fract = deltat / duration
   angle = Math.PI * 2.0 * fract
 
-  mat4.rotate(modelViewMatrix, modelViewMatrix, angle, [0, 1, 1])
+  mat4.rotate(mesh.modelMatrix, mesh.modelMatrix, angle, [0, 1, 1])
 
-  mat4.invert(normalMatrix, modelViewMatrix)
+  mat4.invert(normalMatrix, mesh.modelMatrix)
   mat4.transpose(normalMatrix, normalMatrix)
 
 render = (context, canvas) ->
@@ -108,7 +109,7 @@ render = (context, canvas) ->
   program.bindIndexBuffer(indexBuffer)
 
   program.uniformMatrix4fv("projectionMatrix", projectionMatrix)
-  program.uniformMatrix4fv("modelViewMatrix", modelViewMatrix)
+  program.uniformMatrix4fv("modelViewMatrix", mesh.modelMatrix)
   program.uniformMatrix4fv("normalMatrix", normalMatrix)
 
   program.uniform3f("ambientColor", ambientColor)
