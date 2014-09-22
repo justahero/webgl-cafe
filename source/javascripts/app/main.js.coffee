@@ -61,6 +61,12 @@ program = null
 duration = 5000.0
 currentTime = Date.now()
 
+resizeCanvas = () ->
+  canvas.width  = window.innerWidth
+  canvas.height = window.innerHeight
+  context.setViewport(0, 0, canvas.width, canvas.height)
+
+window.onresize = resizeCanvas
 
 initTextures = (context) ->
   texture = new Cafe.Texture(context.gl, 'resources/images/water512.jpg')
@@ -126,9 +132,6 @@ renderLoop = (context, canvas) ->
   canvas  = document.getElementById('webglcanvas')
   context = new Cafe.Context(canvas)
 
-  context.width  = window.innerWidth
-  context.height = window.innerHeight
-
   initMatrices(canvas)
   initTextures(context)
   initShaders(context)
@@ -141,5 +144,7 @@ renderLoop = (context, canvas) ->
   program.uniform3f("ambientColor", ambientColor)
   program.uniform3f("directionalColor", directionalLight.color)
   program.uniform3fv("directionalVector", directionalLight.direction)
+
+  resizeCanvas()
 
   renderLoop(context, canvas)
