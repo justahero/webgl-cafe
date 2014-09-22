@@ -69,14 +69,22 @@ initMatrices = (canvas) ->
   mat4.perspective(projectionMatrix, Math.PI / 3, canvas.width / canvas.height, 1, 10000)
 
 initMeshes = (context) ->
-  cube = Cafe.Primitives.Cube.create(1.2)
-  mesh = new Cafe.Mesh()
-  mesh.addVertexBuffer("vertexPos", new Cafe.VertexBuffer(context.gl, cube.vertices, 3))
-  mesh.addVertexBuffer("texCoord", new Cafe.VertexBuffer(context.gl, cube.texcoords, 2))
-  mesh.addVertexBuffer("normalPos", new Cafe.VertexBuffer(context.gl, cube.normals, 3))
-  mesh.setIndexBuffer(new Cafe.IndexBuffer(context.gl, cube.indices))
-  mat4.translate(mesh.modelMatrix, mesh.modelMatrix, [0, 0, -5])
-  meshes.push mesh
+  numCubes = 12
+  xoffset  = -numCubes / 2
+
+  size = 0.2
+  cube = Cafe.Primitives.Cube.create(size)
+
+  for x in [0...numCubes]
+    for y in [0...numCubes]
+      for z in [0...numCubes]
+        mesh = new Cafe.Mesh()
+        mesh.addVertexBuffer("vertexPos", new Cafe.VertexBuffer(context.gl, cube.vertices, 3))
+        mesh.addVertexBuffer("texCoord", new Cafe.VertexBuffer(context.gl, cube.texcoords, 2))
+        mesh.addVertexBuffer("normalPos", new Cafe.VertexBuffer(context.gl, cube.normals, 3))
+        mesh.setIndexBuffer(new Cafe.IndexBuffer(context.gl, cube.indices))
+        mat4.translate(mesh.modelMatrix, mesh.modelMatrix, [xoffset + y, xoffset + x, -14 + z])
+        meshes.push mesh
 
 initShaders = (context) ->
   compiler = new Cafe.WebGlCompiler(context.gl, shaders)
@@ -96,23 +104,18 @@ animate = () ->
 render = (context, canvas) ->
   context.clearBuffer(Cafe.Color.WHITE)
 
-  context.useProgram(program)
+  program.bindTexture("uSampler", texture)
 
   for mesh in meshes
     program.bindMesh(mesh)
+
     mat4.invert(normalMatrix, mesh.modelMatrix)
     mat4.transpose(normalMatrix, normalMatrix)
 
     program.uniformMatrix4fv("modelViewMatrix", mesh.modelMatrix)
-    program.uniformMatrix4fv("projectionMatrix", projectionMatrix)
     program.uniformMatrix4fv("normalMatrix", normalMatrix)
 
-    program.uniform3f("ambientColor", ambientColor)
-    program.uniform3f("directionalColor", directionalLight.color)
-    program.uniform3fv("directionalVector", directionalLight.direction)
-    program.bindTexture("uSampler", texture)
-
-  context.drawTriangles(mesh.indexBuffer.size)
+    context.drawTriangles(mesh.indexBuffer.size)
 
 renderLoop = (context, canvas) ->
   requestAnimationFrame(-> renderLoop(context, canvas))
@@ -123,9 +126,20 @@ renderLoop = (context, canvas) ->
   canvas  = document.getElementById('webglcanvas')
   context = new Cafe.Context(canvas)
 
+  context.width  = window.innerWidth
+  context.height = window.innerHeight
+
   initMatrices(canvas)
   initTextures(context)
   initShaders(context)
   initMeshes(context)
+
+  context.useProgram(program)
+
+  program.uniformMatrix4fv("projectionMatrix", projectionMatrix)
+
+  program.uniform3f("ambientColor", ambientColor)
+  program.uniform3f("directionalColor", directionalLight.color)
+  program.uniform3fv("directionalVector", directionalLight.direction)
 
   renderLoop(context, canvas)
