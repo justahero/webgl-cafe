@@ -47,7 +47,7 @@ context = null
 projectionMatrix = mat4.create()
 normalMatrix     = mat4.create()
 
-mesh = new Cafe.Mesh()
+meshes = []
 
 texture = null
 ambientColor = new Cafe.Color(0.3, 0.3, 0.3)
@@ -66,15 +66,17 @@ initTextures = (context) ->
   texture = new Cafe.Texture(context.gl, 'resources/images/water512.jpg')
 
 initMatrices = (canvas) ->
-  mat4.translate(mesh.modelMatrix, mesh.modelMatrix, [0, 0, -5])
   mat4.perspective(projectionMatrix, Math.PI / 3, canvas.width / canvas.height, 1, 10000)
 
 initMeshes = (context) ->
   cube = Cafe.Primitives.Cube.create(1.2)
+  mesh = new Cafe.Mesh()
   mesh.addVertexBuffer("vertexPos", new Cafe.VertexBuffer(context.gl, cube.vertices, 3))
   mesh.addVertexBuffer("texCoord", new Cafe.VertexBuffer(context.gl, cube.texcoords, 2))
   mesh.addVertexBuffer("normalPos", new Cafe.VertexBuffer(context.gl, cube.normals, 3))
   mesh.setIndexBuffer(new Cafe.IndexBuffer(context.gl, cube.indices))
+  mat4.translate(mesh.modelMatrix, mesh.modelMatrix, [0, 0, -5])
+  meshes.push mesh
 
 initShaders = (context) ->
   compiler = new Cafe.WebGlCompiler(context.gl, shaders)
@@ -88,26 +90,27 @@ animate = () ->
   fract = deltat / duration
   angle = Math.PI * 2.0 * fract
 
-  mat4.rotate(mesh.modelMatrix, mesh.modelMatrix, angle, [0, 1, 1])
-
-  mat4.invert(normalMatrix, mesh.modelMatrix)
-  mat4.transpose(normalMatrix, normalMatrix)
+  for mesh in meshes
+    mat4.rotate(mesh.modelMatrix, mesh.modelMatrix, angle, [0, 1, 1])
 
 render = (context, canvas) ->
   context.clearBuffer(Cafe.Color.WHITE)
 
   context.useProgram(program)
 
-  program.bindMesh(mesh)
+  for mesh in meshes
+    program.bindMesh(mesh)
+    mat4.invert(normalMatrix, mesh.modelMatrix)
+    mat4.transpose(normalMatrix, normalMatrix)
 
-  program.uniformMatrix4fv("projectionMatrix", projectionMatrix)
-  program.uniformMatrix4fv("modelViewMatrix", mesh.modelMatrix)
-  program.uniformMatrix4fv("normalMatrix", normalMatrix)
+    program.uniformMatrix4fv("modelViewMatrix", mesh.modelMatrix)
+    program.uniformMatrix4fv("projectionMatrix", projectionMatrix)
+    program.uniformMatrix4fv("normalMatrix", normalMatrix)
 
-  program.uniform3f("ambientColor", ambientColor)
-  program.uniform3f("directionalColor", directionalLight.color)
-  program.uniform3fv("directionalVector", directionalLight.direction)
-  program.bindTexture("uSampler", texture)
+    program.uniform3f("ambientColor", ambientColor)
+    program.uniform3f("directionalColor", directionalLight.color)
+    program.uniform3fv("directionalVector", directionalLight.direction)
+    program.bindTexture("uSampler", texture)
 
   context.drawTriangles(mesh.indexBuffer.size)
 

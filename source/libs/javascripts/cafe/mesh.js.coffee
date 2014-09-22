@@ -6,7 +6,6 @@ namespace 'Cafe', (exports) ->
       @modelMatrix   = mat4.create()
 
     addVertexBuffer: (name, vertexBuffer) ->
-      # @vertexBuffers[name] = vertexBuffer
       @vertexBuffers.push {name: name, buffer: vertexBuffer}
 
     setIndexBuffer: (indexBuffer) ->
