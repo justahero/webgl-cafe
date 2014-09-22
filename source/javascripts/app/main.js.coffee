@@ -73,7 +73,7 @@ initMatrices = (canvas) ->
   mat4.translate(modelViewMatrix, modelViewMatrix, [0, 0, -5])
   mat4.perspective(projectionMatrix, Math.PI / 3, canvas.width / canvas.height, 1, 10000)
 
-initMesh = (context) ->
+initMeshes = (context) ->
   myCube = Cafe.Primitives.Cube.create(1.2)
   vertexBuffer    = new Cafe.VertexBuffer(context.gl, myCube.vertices, 3)
   texcoordsBuffer = new Cafe.VertexBuffer(context.gl, myCube.texcoords, 2)
@@ -131,6 +131,6 @@ renderLoop = (context, canvas) ->
   initMatrices(canvas)
   initTextures(context)
   initShaders(context)
-  initMesh(context)
+  initMeshes(context)
 
   renderLoop(context, canvas)
