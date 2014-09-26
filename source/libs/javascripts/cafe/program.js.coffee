@@ -42,7 +42,7 @@ namespace 'Cafe', (exports) ->
 
     getAttribLocation: (attribName) ->
       location = @_attributesMap[attribName]
-      unless location
+      if location == -1
          throw "Could not getAttribLocation for #{attribName}"
       location
 
@@ -68,25 +68,24 @@ namespace 'Cafe', (exports) ->
         error = gl.getProgramInfoLog(@program)
         throw "Could not compile program, error: #{error}"
 
-      @_attributesMap = @findActiveAttribsMap(gl)
-      @_uniformsMap   = @findActiveUniformsMap(gl)
+      @_attributesMap = @_findActiveAttribsMap(gl)
+      @_uniformsMap   = @_findActiveUniformsMap(gl)
 
       @program
 
-    findActiveAttribsMap: (gl) ->
+    _findActiveAttribsMap: (gl) ->
       result = {}
       numActiveAttributes = @_getNumActiveAttributes(gl)
       for i in [0...numActiveAttributes]
         info = gl.getActiveAttrib(@program, i)
-        result[info.name] = info
+        result[info.name] = gl.getAttribLocation(@program, info.name)
       result
 
-    findActiveUniformsMap: (gl) ->
-      numActiveUniforms = @_getNumActiveUniforms(gl)
-      infos = for i in [0...numActiveUniforms]
-        gl.getActiveUniform(@program, i)
+    _findActiveUniformsMap: (gl) ->
       result = {}
-      for info, index in infos
+      numActiveUniforms = @_getNumActiveUniforms(gl)
+      for i in [0...numActiveUniforms]
+        info = gl.getActiveUniform(@program, i)
         result[info.name] = gl.getUniformLocation(@program, info.name)
       result
 
