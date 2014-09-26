@@ -3,8 +3,8 @@ namespace 'Cafe', (exports) ->
     constructor: (@gl, @vertexShader, @fragmentShader) ->
       @program = null
 
-      @_attributes = null
-      @_uniforms   = null
+      @_attributesMap = null
+      @_uniformsMap   = null
       @_link(@gl)
 
     uniformMatrix4fv: (uniformName, matrix) ->
@@ -41,28 +41,22 @@ namespace 'Cafe', (exports) ->
         @bindIndexBuffer(mesh.indexBuffer)
 
     getAttribLocation: (attribName) ->
-      location = @gl.getAttribLocation(@program, attribName)
-      if location == -1
+      location = @_attributesMap[attribName]
+      unless location
          throw "Could not getAttribLocation for #{attribName}"
       location
 
     uniformLocation: (attribName) ->
-      location = @gl.getUniformLocation(@program, attribName)
-      if location == -1
+      location = @_uniformsMap[attribName]
+      unless location
          throw "Could not getUniformLocation for #{attribName}"
       location
 
     numAttributes: () ->
-      @_attributes.length
+      @_attributesMap.length
 
     numUniforms: () ->
-      @_uniforms.length
-
-    getAttribute: (index) ->
-      @_attributes[index]
-
-    getUniform: (index) ->
-      @_uniforms[index]
+      @_uniformsMap.length
 
     _link: (gl) ->
       @program = gl.createProgram()
@@ -74,20 +68,27 @@ namespace 'Cafe', (exports) ->
         error = gl.getProgramInfoLog(@program)
         throw "Could not compile program, error: #{error}"
 
-      @_attributes = @findActiveAttributes(gl)
-      @_uniforms   = @findActiveUniforms(gl)
+      @_attributesMap = @findActiveAttribsMap(gl)
+      @_uniformsMap   = @findActiveUniformsMap(gl)
 
       @program
 
-    findActiveAttributes: (gl) ->
+    findActiveAttribsMap: (gl) ->
+      result = {}
       numActiveAttributes = @_getNumActiveAttributes(gl)
       for i in [0...numActiveAttributes]
-        gl.getActiveAttrib(@program, i)
+        info = gl.getActiveAttrib(@program, i)
+        result[info.name] = info
+      result
 
-    findActiveUniforms: (gl) ->
+    findActiveUniformsMap: (gl) ->
       numActiveUniforms = @_getNumActiveUniforms(gl)
-      for i in [0...numActiveUniforms]
+      infos = for i in [0...numActiveUniforms]
         gl.getActiveUniform(@program, i)
+      result = {}
+      for info, index in infos
+        result[info.name] = gl.getUniformLocation(@program, info.name)
+      result
 
     _getNumActiveAttributes: (gl) ->
       gl.getProgramParameter(@program, gl.ACTIVE_ATTRIBUTES)
