@@ -50,7 +50,7 @@ normalMatrix     = mat4.create()
 meshes = []
 
 texture = null
-ambientColor = new Cafe.Color(0.3, 0.3, 0.3)
+ambientColor = new Cafe.Color(0.1, 0.1, 0.1)
 direction = vec3.fromValues(0.5, 1, 1)
 directionalLight = new Cafe.DirectionalLight(
   new Cafe.Color(0.8, 1.0, 0.8), vec3.normalize(direction, direction)
@@ -58,7 +58,7 @@ directionalLight = new Cafe.DirectionalLight(
 
 program = null
 
-duration = 5000.0
+duration = 3000.0
 currentTime = Date.now()
 
 resizeCanvas = () ->
@@ -75,10 +75,11 @@ initMatrices = (canvas) ->
   mat4.perspective(projectionMatrix, Math.PI / 3, canvas.width / canvas.height, 1, 10000)
 
 initMeshes = (context) ->
-  numCubes = 12
-  xoffset  = -numCubes / 2
+  numCubes = 16
+  xoffset  = (-numCubes + 1) / 2
+  zoffset  = -24
 
-  size = 0.2
+  size = 0.25
   cube = Cafe.Primitives.Cube.create(size)
 
   for x in [0...numCubes]
@@ -89,7 +90,7 @@ initMeshes = (context) ->
         mesh.addVertexBuffer("texCoord", new Cafe.VertexBuffer(context.gl, cube.texcoords, 2))
         mesh.addVertexBuffer("normalPos", new Cafe.VertexBuffer(context.gl, cube.normals, 3))
         mesh.setIndexBuffer(new Cafe.IndexBuffer(context.gl, cube.indices))
-        mat4.translate(mesh.modelMatrix, mesh.modelMatrix, [xoffset + y, xoffset + x, -14 + z])
+        mat4.translate(mesh.modelMatrix, mesh.modelMatrix, [xoffset + y, xoffset + x, zoffset + z])
         meshes.push mesh
 
 initShaders = (context) ->
@@ -140,7 +141,6 @@ renderLoop = (context, canvas) ->
   context.useProgram(program)
 
   program.uniformMatrix4fv("projectionMatrix", projectionMatrix)
-
   program.uniform3f("ambientColor", ambientColor)
   program.uniform3f("directionalColor", directionalLight.color)
   program.uniform3fv("directionalVector", directionalLight.direction)
