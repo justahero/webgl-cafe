@@ -44,17 +44,13 @@ shaders =
 canvas  = null
 context = null
 
-modelViewMatrix  = mat4.create()
 projectionMatrix = mat4.create()
 normalMatrix     = mat4.create()
 
-indexBuffer     = null
-texcoordsBuffer = null
-vertexBuffer    = null
-normalBuffer    = null
+meshes = []
 
 texture = null
-ambientColor = new Cafe.Color(0.3, 0.3, 0.3)
+ambientColor = new Cafe.Color(0.1, 0.1, 0.1)
 direction = vec3.fromValues(0.5, 1, 1)
 directionalLight = new Cafe.DirectionalLight(
   new Cafe.Color(0.8, 1.0, 0.8), vec3.normalize(direction, direction)
@@ -62,18 +58,44 @@ directionalLight = new Cafe.DirectionalLight(
 
 program = null
 
-duration = 5000.0
+duration = 3000.0
 currentTime = Date.now()
 
-myCube = Cafe.Primitives.Cube.create(1.2)
+resizeCanvas = () ->
+  canvas.width  = window.innerWidth
+  canvas.height = window.innerHeight
+  context.setViewport(0, 0, canvas.width, canvas.height)
 
+window.onresize = resizeCanvas
 
 initTextures = (context) ->
   texture = new Cafe.Texture(context.gl, 'resources/images/water512.jpg')
 
 initMatrices = (canvas) ->
-  mat4.translate(modelViewMatrix, modelViewMatrix, [0, 0, -5])
   mat4.perspective(projectionMatrix, Math.PI / 3, canvas.width / canvas.height, 1, 10000)
+
+initMeshes = (context) ->
+  numCubes = 16
+  xoffset  = (-numCubes + 1) / 2
+  zoffset  = -24
+
+  size = 0.25
+  cube = Cafe.Primitives.Cube.create(size)
+
+  for x in [0...numCubes]
+    for y in [0...numCubes]
+      for z in [0...numCubes]
+        mesh = new Cafe.Mesh()
+        mesh.addVertexBuffer("vertexPos", new Cafe.VertexBuffer(context.gl, cube.vertices, 3))
+        mesh.addVertexBuffer("texCoord", new Cafe.VertexBuffer(context.gl, cube.texcoords, 2))
+        mesh.addVertexBuffer("normalPos", new Cafe.VertexBuffer(context.gl, cube.normals, 3))
+        mesh.setIndexBuffer(new Cafe.IndexBuffer(context.gl, cube.indices))
+        mat4.translate(mesh.modelMatrix, mesh.modelMatrix, [xoffset + y, xoffset + x, zoffset + z])
+        meshes.push mesh
+
+initShaders = (context) ->
+  compiler = new Cafe.WebGlCompiler(context.gl, shaders)
+  program  = compiler.createProgramWithShaders('main_vertex', 'main_fragment')
 
 animate = () ->
   now = Date.now()
@@ -83,31 +105,24 @@ animate = () ->
   fract = deltat / duration
   angle = Math.PI * 2.0 * fract
 
-  mat4.rotate(modelViewMatrix, modelViewMatrix, angle, [0, 1, 1])
+  for mesh in meshes
+    mat4.rotate(mesh.modelMatrix, mesh.modelMatrix, angle, [0, 1, 1])
 
 render = (context, canvas) ->
   context.clearBuffer(Cafe.Color.WHITE)
 
-  context.useProgram(program)
-
-  program.bindVertexBuffer("vertexPos", vertexBuffer)
-  program.bindVertexBuffer("texCoord", texcoordsBuffer)
-  program.bindVertexBuffer("normalPos", normalBuffer)
-  program.bindIndexBuffer(indexBuffer)
-
-  program.uniformMatrix4fv("projectionMatrix", projectionMatrix)
-  program.uniformMatrix4fv("modelViewMatrix", modelViewMatrix)
-  mat4.invert(normalMatrix, modelViewMatrix)
-  mat4.transpose(normalMatrix, normalMatrix)
-  program.uniformMatrix4fv("normalMatrix", normalMatrix)
-
-  program.uniform3f("ambientColor", ambientColor)
-  program.uniform3f("directionalColor", directionalLight.color)
-  program.uniform3fv("directionalVector", directionalLight.direction)
   program.bindTexture("uSampler", texture)
 
-  context.drawTriangles(indexBuffer.size)
+  for mesh in meshes
+    program.bindMesh(mesh)
 
+    mat4.invert(normalMatrix, mesh.modelMatrix)
+    mat4.transpose(normalMatrix, normalMatrix)
+
+    program.uniformMatrix4fv("modelViewMatrix", mesh.modelMatrix)
+    program.uniformMatrix4fv("normalMatrix", normalMatrix)
+
+    context.drawTriangles(mesh.indexBuffer.size)
 
 renderLoop = (context, canvas) ->
   requestAnimationFrame(-> renderLoop(context, canvas))
@@ -118,15 +133,18 @@ renderLoop = (context, canvas) ->
   canvas  = document.getElementById('webglcanvas')
   context = new Cafe.Context(canvas)
 
-  initTextures(context)
   initMatrices(canvas)
+  initTextures(context)
+  initShaders(context)
+  initMeshes(context)
 
-  compiler = new Cafe.WebGlCompiler(context.gl, shaders)
-  program  = compiler.createProgramWithShaders('main_vertex', 'main_fragment')
+  context.useProgram(program)
 
-  vertexBuffer    = new Cafe.VertexBuffer(context.gl, myCube.vertices, 3)
-  texcoordsBuffer = new Cafe.VertexBuffer(context.gl, myCube.texcoords, 2)
-  normalBuffer    = new Cafe.VertexBuffer(context.gl, myCube.normals, 3)
-  indexBuffer     = new Cafe.IndexBuffer(context.gl, myCube.indices)
+  program.uniformMatrix4fv("projectionMatrix", projectionMatrix)
+  program.uniform3f("ambientColor", ambientColor)
+  program.uniform3f("directionalColor", directionalLight.color)
+  program.uniform3fv("directionalVector", directionalLight.direction)
+
+  resizeCanvas()
 
   renderLoop(context, canvas)
