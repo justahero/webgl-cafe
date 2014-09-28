@@ -40,7 +40,6 @@ shaders =
                        gl_FragColor = vec4(texelColor.rgb * vLighting, 1.0);
                    }
                    """
-
 canvas  = null
 context = null
 
@@ -66,10 +65,8 @@ resizeCanvas = () ->
   canvas.height = window.innerHeight
   context.setViewport(0, 0, canvas.width, canvas.height)
 
-window.onresize = resizeCanvas
-
 initTextures = (context) ->
-  texture = new Cafe.Texture(context.gl, 'resources/images/water512.jpg')
+  texture = new Cafe.Texture(context.gl, '/resources/images/water512.jpg')
 
 initMatrices = (canvas) ->
   mat4.perspective(projectionMatrix, Math.PI / 3, canvas.width / canvas.height, 1, 10000)
@@ -130,6 +127,8 @@ renderLoop = (context, canvas) ->
   animate()
 
 @main = ->
+  window.onresize = resizeCanvas
+
   canvas  = document.getElementById('webglcanvas')
   context = new Cafe.Context(canvas)
 

@@ -2,11 +2,12 @@ TARGET = ENV['TARGET'] || environment
 
 # Livereload
 activate :livereload
-activate :directory_indexes
+# activate :directory_indexes
 
 set :css_dir,    'stylesheets'
 set :js_dir,     'javascripts'
 set :images_dir, 'images'
+set :layouts_dir, 'layouts'
 
 sprockets.append_path "libs/javascripts"
 sprockets.append_path "resources"
