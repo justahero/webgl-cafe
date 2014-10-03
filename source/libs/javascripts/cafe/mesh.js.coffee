@@ -1,9 +1,10 @@
 namespace 'Cafe', (exports) ->
   class exports.Mesh
-    @create: (context, primitive) ->
+    @create: (context, primitive, with_texture = true) ->
       mesh = new Cafe.Mesh()
       mesh.addVertexBuffer('vertex', new Cafe.VertexBuffer(context.gl, primitive.vertices, 3))
-      mesh.addVertexBuffer('texCoord',  new Cafe.VertexBuffer(context.gl, primitive.texcoords, 2))
+      if with_texture
+        mesh.addVertexBuffer('texCoord',  new Cafe.VertexBuffer(context.gl, primitive.texcoords, 2))
       mesh.addVertexBuffer('normal', new Cafe.VertexBuffer(context.gl, primitive.normals, 3))
       mesh.setIndexBuffer(new Cafe.IndexBuffer(context.gl, primitive.indices))
       mesh

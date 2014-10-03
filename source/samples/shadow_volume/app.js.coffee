@@ -3,7 +3,6 @@
 shaders =
   'main_vertex': """
     attribute highp vec3 vertex;
-    attribute highp vec2 texCoord;
     attribute highp vec3 normal;
 
     uniform mat4 projectionMatrix;
@@ -14,7 +13,6 @@ shaders =
     uniform vec3 directionalColor;
     uniform vec3 directionalVector;
 
-    varying highp vec2 vTextureCoord;
     varying highp vec3 vLighting;
 
     void main(void) {
@@ -25,18 +23,15 @@ shaders =
         highp float directional = max(dot(transformedNormal.xyz, directionalVector), 0.0);
 
         vLighting = ambientColor + (directionalColor * directional);
-        vTextureCoord = texCoord;
     }
   """
   'main_fragment': """
-    varying highp vec2 vTextureCoord;
     varying highp vec3 vLighting;
 
     uniform sampler2D uSampler;
 
     void main(void) {
-        mediump vec4 texelColor = texture2D(uSampler, vec2(vTextureCoord.s, vTextureCoord.t));
-        gl_FragColor = vec4(texelColor.rgb * vLighting, 1.0);
+        gl_FragColor = vec4(vLighting, 1.0);
     }
   """
 
@@ -53,7 +48,7 @@ texture = null
 ambientColor = new Cafe.Color(0.1, 0.1, 0.1)
 direction = vec3.fromValues(0.5, 1, 1)
 directionalLight = new Cafe.DirectionalLight(
-  new Cafe.Color(0.8, 1.0, 0.8), vec3.normalize(direction, direction)
+  new Cafe.Color(0.8, 0.8, 0.8), vec3.normalize(direction, direction)
 )
 
 program = null
@@ -71,9 +66,9 @@ initTextures = (context) ->
   texture = new Cafe.Texture(context.gl, '/resources/images/water512.jpg')
 
 initMeshes = (context) ->
-  cube_mesh = Cafe.Mesh.create(context, Cafe.Primitives.Cube.create(0.25))
+  cube_mesh = Cafe.Mesh.create(context, Cafe.Primitives.Cube.create(0.25), false)
   cube_mesh.trans([0, 0, -5])
-  plane_mesh = Cafe.Mesh.create(context, Cafe.Primitives.Plane.create(2, 2))
+  plane_mesh = Cafe.Mesh.create(context, Cafe.Primitives.Plane.create(2, 2), false)
   plane_mesh.trans([0, -1, -5])
 
 initShaders = (context) ->
@@ -94,7 +89,6 @@ render = (context, canvas) ->
   context.clearBuffer(Cafe.Color.WHITE)
 
   program.matrix4("projectionMatrix", projectionMatrix)
-  program.bindTexture("uSampler", texture)
 
   mat4.invert(normalMatrix, cube_mesh.modelMatrix)
   mat4.transpose(normalMatrix, normalMatrix)

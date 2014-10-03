@@ -4,7 +4,7 @@ shaders =
   'main_vertex': """
                  attribute highp vec3 vertex;
                  attribute highp vec2 texCoord;
-                 attribute highp vec3 normalPos;
+                 attribute highp vec3 normal;
 
                  uniform highp mat4 modelViewMatrix;
                  uniform highp mat4 projectionMatrix;
@@ -21,7 +21,7 @@ shaders =
                      gl_Position = projectionMatrix * modelViewMatrix * vec4(vertex, 1);
 
                      // apply lighting effect
-                     highp vec4 transformedNormal = normalMatrix * vec4(normalPos, 1.0);
+                     highp vec4 transformedNormal = normalMatrix * vec4(normal, 1.0);
                      highp float directional = max(dot(transformedNormal.xyz, directionalVector), 0.0);
 
                      vLighting = ambientColor + (directionalColor * directional);
@@ -70,9 +70,9 @@ initTextures = (context) ->
   texture = new Cafe.Texture(context.gl, '/resources/images/water512.jpg')
 
 initMeshes = (context) ->
-  numCubes = 16
+  numCubes = 10
   xoffset  = (-numCubes + 1) / 2
-  zoffset  = -24
+  zoffset  = -20
 
   size = 0.25
   cube = Cafe.Primitives.Cube.create(size)
