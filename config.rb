@@ -14,11 +14,13 @@ sprockets.append_path "resources"
 sprockets.append_path "vendor"
 
 # auto generate all Cafe sample files
-samples = Dir['source/samples/*/'].map{ |d| File.basename(d) }
-samples.each do |sample|
+samples_files_list = Dir['source/samples/*/'].map{ |d| File.basename(d) }
+samples_files_list.each do |sample|
   STDOUT.puts "SAMPLE: #{sample}"
   proxy "examples/#{sample}/index.html", "sample.html", locals: { :sample => sample }, :ignore => true
 end
+
+set :samples_files_list, samples_files_list
 
 configure :development do
   set :debug_assets, true
