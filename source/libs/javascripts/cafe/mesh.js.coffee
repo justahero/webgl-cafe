@@ -24,3 +24,6 @@ namespace 'Cafe', (exports) ->
 
     rotate: (angle, vec3) ->
       mat4.rotate(@modelMatrix, @modelMatrix, angle, vec3)
+
+    trans: (vec3) ->
+      mat4.translate(@modelMatrix, @modelMatrix, vec3)

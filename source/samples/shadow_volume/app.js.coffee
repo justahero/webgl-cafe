@@ -71,7 +71,7 @@ initTextures = (context) ->
 
 initMeshes = (context) ->
   cube_mesh = Cafe.Mesh.create(context, Cafe.Primitives.Cube.create(0.25))
-  mat4.translate(cube_mesh.modelMatrix, cube_mesh.modelMatrix, [0, 0, -5])
+  cube_mesh.trans([0, 0, -5])
 
 initShaders = (context) ->
   compiler = new Cafe.WebGlCompiler(context.gl, shaders)

@@ -81,7 +81,7 @@ initMeshes = (context) ->
     for y in [0...numCubes]
       for z in [0...numCubes]
         mesh = Cafe.Mesh.create(context, cube)
-        mat4.translate(mesh.modelMatrix, mesh.modelMatrix, [xoffset + y, xoffset + x, zoffset + z])
+        mesh.trans([xoffset + y, xoffset + x, zoffset + z])
         meshes.push mesh
 
 initShaders = (context) ->
