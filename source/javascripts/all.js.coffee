@@ -10,3 +10,7 @@ selectedSample = null
     viewer = document.getElementById('viewer')
     viewer.src = "examples/#{sample}"
     viewer.focus()
+
+@reset_sample = () ->
+  viewer = document.getElementById('viewer')
+  viewer.src = ""
