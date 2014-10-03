@@ -80,11 +80,7 @@ initMeshes = (context) ->
   for x in [0...numCubes]
     for y in [0...numCubes]
       for z in [0...numCubes]
-        mesh = new Cafe.Mesh()
-        mesh.addVertexBuffer("vertexPos", new Cafe.VertexBuffer(context.gl, cube.vertices, 3))
-        mesh.addVertexBuffer("texCoord", new Cafe.VertexBuffer(context.gl, cube.texcoords, 2))
-        mesh.addVertexBuffer("normalPos", new Cafe.VertexBuffer(context.gl, cube.normals, 3))
-        mesh.setIndexBuffer(new Cafe.IndexBuffer(context.gl, cube.indices))
+        mesh = Cafe.Mesh.create(context, cube)
         mat4.translate(mesh.modelMatrix, mesh.modelMatrix, [xoffset + y, xoffset + x, zoffset + z])
         meshes.push mesh
 
