@@ -64,12 +64,10 @@ resizeCanvas = () ->
   canvas.width  = window.innerWidth
   canvas.height = window.innerHeight
   context.setViewport(0, 0, canvas.width, canvas.height)
+  mat4.perspective(projectionMatrix, Math.PI / 3, canvas.width / canvas.height, 1, 10000)
 
 initTextures = (context) ->
   texture = new Cafe.Texture(context.gl, '/resources/images/water512.jpg')
-
-initMatrices = (canvas) ->
-  mat4.perspective(projectionMatrix, Math.PI / 3, canvas.width / canvas.height, 1, 10000)
 
 initMeshes = (context) ->
   numCubes = 16
@@ -108,6 +106,7 @@ animate = () ->
 render = (context, canvas) ->
   context.clearBuffer(Cafe.Color.WHITE)
 
+  program.uniformMatrix4fv("projectionMatrix", projectionMatrix)
   program.bindTexture("uSampler", texture)
 
   for mesh in meshes
@@ -132,14 +131,12 @@ renderLoop = (context, canvas) ->
   canvas  = document.getElementById('webglcanvas')
   context = new Cafe.Context(canvas)
 
-  initMatrices(canvas)
   initTextures(context)
   initShaders(context)
   initMeshes(context)
 
   context.useProgram(program)
 
-  program.uniformMatrix4fv("projectionMatrix", projectionMatrix)
   program.uniform3f("ambientColor", ambientColor)
   program.uniform3f("directionalColor", directionalLight.color)
   program.uniform3fv("directionalVector", directionalLight.direction)
