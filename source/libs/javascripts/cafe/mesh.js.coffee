@@ -19,5 +19,5 @@ namespace 'Cafe', (exports) ->
     setIndexBuffer: (indexBuffer) ->
       @indexBuffer = indexBuffer
 
-    render: (context) ->
-      context.drawTriangles(@indexBuffer.size)
+    render: (gl, count, offset = 0) ->
+      gl.drawElements(gl.TRIANGLES, count, gl.UNSIGNED_SHORT, offset * 2)

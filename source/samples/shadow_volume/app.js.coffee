@@ -93,15 +93,12 @@ render = (context, canvas) ->
   program.uniformMatrix4fv("projectionMatrix", projectionMatrix)
   program.bindTexture("uSampler", texture)
 
-  program.bindMesh(cube_mesh)
-
   mat4.invert(normalMatrix, cube_mesh.modelMatrix)
   mat4.transpose(normalMatrix, normalMatrix)
 
   program.uniformMatrix4fv("modelViewMatrix", cube_mesh.modelMatrix)
   program.uniformMatrix4fv("normalMatrix", normalMatrix)
-
-  context.drawTriangles(cube_mesh.indexBuffer.size)
+  program.render(cube_mesh)
 
 renderLoop = (context, canvas) ->
   requestAnimationFrame(-> renderLoop(context, canvas))
