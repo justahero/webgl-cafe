@@ -11,10 +11,10 @@ namespace 'Cafe.Primitives', (exports) ->
 
     _createVertices: (xsize, ysize) ->
       vertices = new Float32Array([
-        -xsize, -xsize,  xsize,
-         xsize, -xsize,  xsize,
-         xsize,  xsize,  xsize,
-        -xsize,  xsize,  xsize,
+        -xsize, 0,  ysize,
+         xsize, 0,  ysize,
+         xsize, 0, -ysize,
+        -xsize, 0, -ysize,
       ])
 
     _createTextureCoords: ->
@@ -27,10 +27,10 @@ namespace 'Cafe.Primitives', (exports) ->
 
     _createNormals: ->
       normals = new Float32Array([
-         0.0,  0.0,  1.0,
-         0.0,  0.0,  1.0,
-         0.0,  0.0,  1.0,
-         0.0,  0.0,  1.0,
+         0.0,  1.0,  0.0,
+         0.0,  1.0,  0.0,
+         0.0,  1.0,  0.0,
+         0.0,  1.0,  0.0,
       ])
 
     _createIndices: ->

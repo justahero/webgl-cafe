@@ -46,7 +46,8 @@ context = null
 projectionMatrix = mat4.create()
 normalMatrix     = mat4.create()
 
-cube_mesh = null
+cube_mesh  = null
+plane_mesh = null
 
 texture = null
 ambientColor = new Cafe.Color(0.1, 0.1, 0.1)
@@ -64,7 +65,7 @@ resizeCanvas = () ->
   canvas.width  = window.innerWidth
   canvas.height = window.innerHeight
   context.setViewport(0, 0, canvas.width, canvas.height)
-  mat4.perspective(projectionMatrix, Math.PI / 3, canvas.width / canvas.height, 1, 10000)
+  mat4.perspective(projectionMatrix, Math.PI / 3.5, canvas.width / canvas.height, 1, 10000)
 
 initTextures = (context) ->
   texture = new Cafe.Texture(context.gl, '/resources/images/water512.jpg')
@@ -72,6 +73,8 @@ initTextures = (context) ->
 initMeshes = (context) ->
   cube_mesh = Cafe.Mesh.create(context, Cafe.Primitives.Cube.create(0.25))
   cube_mesh.trans([0, 0, -5])
+  plane_mesh = Cafe.Mesh.create(context, Cafe.Primitives.Plane.create(2, 2))
+  plane_mesh.trans([0, -1, -5])
 
 initShaders = (context) ->
   compiler = new Cafe.WebGlCompiler(context.gl, shaders)
@@ -95,10 +98,15 @@ render = (context, canvas) ->
 
   mat4.invert(normalMatrix, cube_mesh.modelMatrix)
   mat4.transpose(normalMatrix, normalMatrix)
-
   program.matrix4("modelViewMatrix", cube_mesh.modelMatrix)
   program.matrix4("normalMatrix", normalMatrix)
   program.render(cube_mesh)
+
+  mat4.invert(normalMatrix, plane_mesh.modelMatrix)
+  mat4.transpose(normalMatrix, normalMatrix)
+  program.matrix4("modelViewMatrix", plane_mesh.modelMatrix)
+  program.matrix4("normalMatrix", normalMatrix)
+  program.render(plane_mesh)
 
 renderLoop = (context, canvas) ->
   requestAnimationFrame(-> renderLoop(context, canvas))
