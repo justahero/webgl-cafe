@@ -102,19 +102,16 @@ animate = () ->
 render = (context, canvas) ->
   context.clearBuffer(Cafe.Color.WHITE)
 
-  program.uniformMatrix4fv("projectionMatrix", projectionMatrix)
+  program.matrix4("projectionMatrix", projectionMatrix)
   program.bindTexture("uSampler", texture)
 
   for mesh in meshes
-    program.bindMesh(mesh)
-
     mat4.invert(normalMatrix, mesh.modelMatrix)
     mat4.transpose(normalMatrix, normalMatrix)
 
-    program.uniformMatrix4fv("modelViewMatrix", mesh.modelMatrix)
-    program.uniformMatrix4fv("normalMatrix", normalMatrix)
-
-    context.drawTriangles(mesh.indexBuffer.size)
+    program.matrix4("modelViewMatrix", mesh.modelMatrix)
+    program.matrix4("normalMatrix", normalMatrix)
+    program.render(mesh)
 
 renderLoop = (context, canvas) ->
   requestAnimationFrame(-> renderLoop(context, canvas))

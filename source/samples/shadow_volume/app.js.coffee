@@ -90,14 +90,14 @@ animate = () ->
 render = (context, canvas) ->
   context.clearBuffer(Cafe.Color.WHITE)
 
-  program.uniformMatrix4fv("projectionMatrix", projectionMatrix)
+  program.matrix4("projectionMatrix", projectionMatrix)
   program.bindTexture("uSampler", texture)
 
   mat4.invert(normalMatrix, cube_mesh.modelMatrix)
   mat4.transpose(normalMatrix, normalMatrix)
 
-  program.uniformMatrix4fv("modelViewMatrix", cube_mesh.modelMatrix)
-  program.uniformMatrix4fv("normalMatrix", normalMatrix)
+  program.matrix4("modelViewMatrix", cube_mesh.modelMatrix)
+  program.matrix4("normalMatrix", normalMatrix)
   program.render(cube_mesh)
 
 renderLoop = (context, canvas) ->

@@ -11,7 +11,7 @@ namespace 'Cafe', (exports) ->
       @_bindMesh(mesh)
       mesh.render(@gl, mesh.indexBuffer.size)
 
-    uniformMatrix4fv: (uniformName, matrix) ->
+    matrix4: (uniformName, matrix) ->
       uniform = @uniformLocation(uniformName)
       @gl.uniformMatrix4fv(uniform, false, matrix);
 
