@@ -2,7 +2,7 @@
 
 shaders =
   'main_vertex': """
-    attribute highp vec3 vertex;
+    attribute highp vec3 position;
     attribute highp vec3 normal;
 
     uniform mat4 projectionMatrix;
@@ -15,8 +15,14 @@ shaders =
 
     varying highp vec3 vLighting;
 
+    varying vec3 vWorldNormal;
+    varying vec4 vWorldPosition;
+
     void main(void) {
-        gl_Position = projectionMatrix * model * vec4(vertex, 1);
+        vWorldNormal = normal;
+        vWorldPosition = model * vec4(position, 1.0);
+
+        gl_Position = projectionMatrix * vWorldPosition;
 
         // apply lighting effect
         highp vec4 transformedNormal = normalMatrix * vec4(normal, 1.0);
