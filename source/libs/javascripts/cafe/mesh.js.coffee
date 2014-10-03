@@ -10,3 +10,6 @@ namespace 'Cafe', (exports) ->
 
     setIndexBuffer: (indexBuffer) ->
       @indexBuffer = indexBuffer
+
+    render: (context) ->
+      context.drawTriangles(@indexBuffer.size)
