@@ -2,44 +2,44 @@
 
 shaders =
   'main_vertex': """
-                 attribute highp vec3 vertexPos;
-                 attribute highp vec2 texCoord;
-                 attribute highp vec3 normalPos;
+    attribute highp vec3 vertexPos;
+    attribute highp vec2 texCoord;
+    attribute highp vec3 normalPos;
 
-                 uniform highp mat4 modelViewMatrix;
-                 uniform highp mat4 projectionMatrix;
-                 uniform highp mat4 normalMatrix;
+    uniform highp mat4 modelViewMatrix;
+    uniform highp mat4 projectionMatrix;
+    uniform highp mat4 normalMatrix;
 
-                 uniform vec3 ambientColor;
-                 uniform vec3 directionalColor;
-                 uniform vec3 directionalVector;
+    uniform vec3 ambientColor;
+    uniform vec3 directionalColor;
+    uniform vec3 directionalVector;
 
-                 varying highp vec2 vTextureCoord;
-                 varying highp vec3 vLighting;
+    varying highp vec2 vTextureCoord;
+    varying highp vec3 vLighting;
 
-                 void main(void) {
-                     gl_Position = projectionMatrix * modelViewMatrix * vec4(vertexPos, 1);
+    void main(void) {
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(vertexPos, 1);
 
-                     // apply lighting effect
-                     highp vec4 transformedNormal = normalMatrix * vec4(normalPos, 1.0);
-                     highp float directional = max(dot(transformedNormal.xyz, directionalVector), 0.0);
+        // apply lighting effect
+        highp vec4 transformedNormal = normalMatrix * vec4(normalPos, 1.0);
+        highp float directional = max(dot(transformedNormal.xyz, directionalVector), 0.0);
 
-                     vLighting = ambientColor + (directionalColor * directional);
-                     vTextureCoord = texCoord;
-                 }
-                 """
+        vLighting = ambientColor + (directionalColor * directional);
+        vTextureCoord = texCoord;
+    }
+  """
   'main_fragment': """
-                   varying highp vec2 vTextureCoord;
-                   varying highp vec3 vLighting;
+    varying highp vec2 vTextureCoord;
+    varying highp vec3 vLighting;
 
-                   uniform sampler2D uSampler;
+    uniform sampler2D uSampler;
 
-                   void main(void) {
-                       mediump vec4 texelColor = texture2D(uSampler, vec2(vTextureCoord.s, vTextureCoord.t));
+    void main(void) {
+        mediump vec4 texelColor = texture2D(uSampler, vec2(vTextureCoord.s, vTextureCoord.t));
+        gl_FragColor = vec4(texelColor.rgb * vLighting, 1.0);
+    }
+  """
 
-                       gl_FragColor = vec4(texelColor.rgb * vLighting, 1.0);
-                   }
-                   """
 canvas  = null
 context = null
 
