@@ -2,13 +2,13 @@
 
 shaders =
   'main_vertex': """
-    attribute highp vec3 vertexPos;
+    attribute highp vec3 vertex;
     attribute highp vec2 texCoord;
-    attribute highp vec3 normalPos;
+    attribute highp vec3 normal;
 
-    uniform highp mat4 modelViewMatrix;
-    uniform highp mat4 projectionMatrix;
-    uniform highp mat4 normalMatrix;
+    uniform mat4 projectionMatrix;
+    uniform mat4 normalMatrix;
+    uniform mat4 model;
 
     uniform vec3 ambientColor;
     uniform vec3 directionalColor;
@@ -18,10 +18,10 @@ shaders =
     varying highp vec3 vLighting;
 
     void main(void) {
-        gl_Position = projectionMatrix * modelViewMatrix * vec4(vertexPos, 1);
+        gl_Position = projectionMatrix * model * vec4(vertex, 1);
 
         // apply lighting effect
-        highp vec4 transformedNormal = normalMatrix * vec4(normalPos, 1.0);
+        highp vec4 transformedNormal = normalMatrix * vec4(normal, 1.0);
         highp float directional = max(dot(transformedNormal.xyz, directionalVector), 0.0);
 
         vLighting = ambientColor + (directionalColor * directional);
@@ -98,13 +98,13 @@ render = (context, canvas) ->
 
   mat4.invert(normalMatrix, cube_mesh.modelMatrix)
   mat4.transpose(normalMatrix, normalMatrix)
-  program.matrix4("modelViewMatrix", cube_mesh.modelMatrix)
+  program.matrix4("model", cube_mesh.modelMatrix)
   program.matrix4("normalMatrix", normalMatrix)
   program.render(cube_mesh)
 
   mat4.invert(normalMatrix, plane_mesh.modelMatrix)
   mat4.transpose(normalMatrix, normalMatrix)
-  program.matrix4("modelViewMatrix", plane_mesh.modelMatrix)
+  program.matrix4("model", plane_mesh.modelMatrix)
   program.matrix4("normalMatrix", normalMatrix)
   program.render(plane_mesh)
 
