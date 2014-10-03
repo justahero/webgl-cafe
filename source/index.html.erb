@@ -5,11 +5,11 @@
     <h3>Samples</h3>
     <ul>
       <% samples_files_list.each do |sample| %>
-        <li><%= sample %></li>
+        <li><a href="#" onClick="load_sample('<%= sample %>');"><%= sample %></a></li>
       <% end %>
     </ul>
   </div>
-  
+
   <iframe id="viewer">
   </iframe>
 </div>
