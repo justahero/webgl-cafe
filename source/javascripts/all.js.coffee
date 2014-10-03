@@ -14,3 +14,4 @@ selectedSample = null
 @reset_sample = () ->
   viewer = document.getElementById('viewer')
   viewer.src = ""
+  selectedSample = null
