@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+  <head>
+    <title>WebGlSamples</title>
+    <%= yield_content :assets %>
+    <%= stylesheet_link_tag :all %>
+    <%= javascript_include_tag :all %>
+  </head>
+
+  <body>
+    <%= yield %>
+  </body>
+</html>

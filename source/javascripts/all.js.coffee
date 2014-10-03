@@ -1,5 +1,17 @@
 #= require jquery
-#= require ../vendor/webgl-debug.js
 #= require ../vendor/gl-matrix/gl-matrix.js
 #= require cafe
-#= require app/main
+
+selectedSample = null
+
+@load_sample = (sample) ->
+  unless selectedSample == sample
+    selectedSample = sample
+    viewer = document.getElementById('viewer')
+    viewer.src = "examples/#{sample}"
+    viewer.focus()
+
+@reset_sample = () ->
+  viewer = document.getElementById('viewer')
+  viewer.src = ""
+  selectedSample = null
