@@ -21,3 +21,6 @@ namespace 'Cafe', (exports) ->
 
     render: (gl, count, offset = 0) ->
       gl.drawElements(gl.TRIANGLES, count, gl.UNSIGNED_SHORT, offset * 2)
+
+    rotate: (angle, vec3) ->
+      mat4.rotate(@modelMatrix, @modelMatrix, angle, vec3)

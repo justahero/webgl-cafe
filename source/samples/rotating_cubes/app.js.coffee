@@ -97,7 +97,7 @@ animate = () ->
   angle = Math.PI * 2.0 * fract
 
   for mesh in meshes
-    mat4.rotate(mesh.modelMatrix, mesh.modelMatrix, angle, [0, 1, 1])
+    mesh.rotate(angle, [0, 1, 1])
 
 render = (context, canvas) ->
   context.clearBuffer(Cafe.Color.WHITE)

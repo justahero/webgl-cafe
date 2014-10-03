@@ -85,7 +85,7 @@ animate = () ->
   fract = deltat / duration
   angle = Math.PI * 2.0 * fract
 
-  mat4.rotate(cube_mesh.modelMatrix, cube_mesh.modelMatrix, angle, [0, 1, 1])
+  cube_mesh.rotate(angle, [0, 1, 1])
 
 render = (context, canvas) ->
   context.clearBuffer(Cafe.Color.WHITE)
