@@ -70,14 +70,7 @@ initTextures = (context) ->
   texture = new Cafe.Texture(context.gl, '/resources/images/water512.jpg')
 
 initMeshes = (context) ->
-  size = 0.25
-  cube = Cafe.Primitives.Cube.create(size)
-
-  cube_mesh = new Cafe.Mesh()
-  cube_mesh.addVertexBuffer("vertexPos", new Cafe.VertexBuffer(context.gl, cube.vertices, 3))
-  cube_mesh.addVertexBuffer("texCoord", new Cafe.VertexBuffer(context.gl, cube.texcoords, 2))
-  cube_mesh.addVertexBuffer("normalPos", new Cafe.VertexBuffer(context.gl, cube.normals, 3))
-  cube_mesh.setIndexBuffer(new Cafe.IndexBuffer(context.gl, cube.indices))
+  cube_mesh = Cafe.Mesh.create(context, Cafe.Primitives.Cube.create(0.25))
   mat4.translate(cube_mesh.modelMatrix, cube_mesh.modelMatrix, [0, 0, -5])
 
 initShaders = (context) ->
