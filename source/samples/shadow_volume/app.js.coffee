@@ -50,7 +50,6 @@ normalMatrix = new Cafe.Matrix4()
 cube_mesh  = null
 plane_mesh = null
 
-texture = null
 ambientColor = new Cafe.Color(0.1, 0.1, 0.1)
 direction = vec3.fromValues(0.5, 1, 1)
 directionalLight = new Cafe.DirectionalLight(
@@ -61,9 +60,6 @@ program = null
 
 duration = 3000.0
 currentTime = Date.now()
-
-initTextures = (context) ->
-  texture = new Cafe.Texture(context.gl, '/resources/images/water512.jpg')
 
 initMeshes = (context) ->
   cube_mesh = Cafe.Mesh.create(context, Cafe.Primitives.Cube.create(0.25), false)
@@ -110,7 +106,6 @@ renderLoop = (context, canvas) ->
   canvas  = document.getElementById('webglcanvas')
   context = new Cafe.Context(canvas)
 
-  initTextures(context)
   initShaders(context)
   initMeshes(context)
 
