@@ -82,7 +82,7 @@ context = null
 
 camera = new Cafe.Camera()
 
-lightView = new Cafe.Matrix4().translate([0, 0, -6])
+lightView = new Cafe.Matrix4().translate([0, 0, -6]).rotateX(Math.PI / 2).rotateY(Math.PI)
 lightRot  = Cafe.Matrix3.fromMat4Rot(lightView)
 
 # remove this matrix
@@ -97,10 +97,10 @@ duration = 3000.0
 currentTime = Date.now()
 
 initMeshes = (context) ->
-  cube_mesh = Cafe.Mesh.create(context, Cafe.Primitives.Cube.create(0.4), false)
-  cube_mesh.trans([0, 0, -5])
-  plane_mesh = Cafe.Mesh.create(context, Cafe.Primitives.Plane.create(4, 4), false)
-  plane_mesh.trans([0, -1, -5])
+  cube_mesh = Cafe.Mesh.create(context, Cafe.Primitives.Cube.create(0.5), false)
+  cube_mesh.trans([0, 0, 0])
+  plane_mesh = Cafe.Mesh.create(context, Cafe.Primitives.Plane.create(5, 5), false)
+  plane_mesh.trans([0, -1, 0])
 
 initShaders = (context) ->
   compiler = new Cafe.WebGlCompiler(context.gl, shaders)
@@ -121,7 +121,7 @@ render = (context, canvas) ->
 
   camera.perspective(Math.PI / 3.5, context.aspect(), 1, 10000)
   program.matrix4("camProj", camera.projection)
-  camera.view.identity().translate([0, -1, -5])
+  camera.lookat([0, 4, 18], [0, -1, 0], [0, 1, 0])
   program.matrix4("camView", camera.view)
 
   program.matrix4("lightView", lightView)

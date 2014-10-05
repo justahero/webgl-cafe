@@ -6,3 +6,7 @@ namespace 'Cafe', (exports) ->
 
     perspective: (fov, aspect, near, far) ->
       @projection.perspective(fov, aspect, near, far)
+
+    lookat: (eye, center, up) ->
+      @view.identity()
+      mat4.lookAt(@view.values, eye, center, up)
