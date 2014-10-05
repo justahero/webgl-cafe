@@ -2,10 +2,13 @@
 
 shaders =
   'main_vertex': """
+    varying vec3 vWorldNormal;
+    varying vec4 vWorldPosition;
+
     uniform mat4 camProj, camView;
-    uniform mat4 model;
     uniform mat4 lightProj, ligthView;
     uniform mat3 lightRot;
+    uniform mat4 model;
 
     uniform mat4 normalMatrix;
 
@@ -14,9 +17,6 @@ shaders =
     uniform vec3 directionalVector;
 
     varying highp vec3 vLighting;
-
-    varying vec3 vWorldNormal;
-    varying vec4 vWorldPosition;
 
     attribute highp vec3 position;
     attribute highp vec3 normal;
@@ -34,7 +34,16 @@ shaders =
         vLighting = ambientColor + (directionalColor * directional);
     }
   """
-  'main_fragment': """//essl
+  'main_fragment': """
+    varying highp vec3 vWorldNormal;
+    varying highp vec4 vWorldPosition;
+    varying highp vec3 vLighting;
+
+    uniform highp mat4 camProj, camView;
+    uniform highp mat4 lightProj, ligthView;
+    uniform highp mat3 lightRot;
+    uniform highp mat4 model;
+
     highp float PI = 3.14159265358979323846264;
 
     highp float attenuation(highp vec3 dir){
@@ -42,7 +51,6 @@ shaders =
         highp float radiance = 1.0 / (1.0 + pow(dist / 10.0, 2.0));
         return clamp(radiance * 10.0, 0.0, 1.0);
     }
-
 
     highp float influence(highp vec3 normal, highp float coneAngle){
         highp float minConeAngle = ((360.0 - coneAngle - 10.0) / 360.0) * PI;
@@ -61,9 +69,6 @@ shaders =
     highp vec3 gamma(highp vec3 color) {
         return pow(color, vec3(2.2));
     }
-
-    varying highp vec3 vWorldNormal;
-    varying highp vec3 vLighting;
 
     void main(void) {
         highp vec3 worldNormal = normalize(vWorldNormal);
