@@ -69,6 +69,8 @@ shaders =
 
         highp vec3 camPos   = (camView * vWorldPosition).xyz;
         highp vec3 lightPos = (lightView * vWorldPosition).xyz;
+        highp vec3 lightPosNormal     = normalize(lightPos);
+        highp vec3 lightSurfaceNormal = lightRot * worldNormal;
 
         gl_FragColor = vec4(vLighting, 1.0);
     }
@@ -80,6 +82,7 @@ context = null
 camera = new Cafe.Camera()
 
 lightView = new Cafe.Matrix4().translate([0, 0, -6])
+lightRot  = Cafe.Matrix3.fromMat4Rot(lightView)
 
 # remove this matrix
 normalMatrix = new Cafe.Matrix4()
