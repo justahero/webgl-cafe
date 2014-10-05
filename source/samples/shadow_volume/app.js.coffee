@@ -45,8 +45,7 @@ shaders =
 canvas  = null
 context = null
 
-camProj = new Cafe.Matrix4()
-camView = new Cafe.Matrix4()
+camera = new Cafe.Camera()
 
 # remove this matrix
 normalMatrix = new Cafe.Matrix4()
@@ -88,10 +87,10 @@ animate = () ->
 render = (context, canvas) ->
   context.clearBuffer(Cafe.Color.BLACK)
 
-  camProj.perspective(Math.PI / 3.5, context.aspect(), 1, 10000)
-  program.matrix4("camProj", camProj)
-  camView.identity().translate([0, -1, -3])
-  program.matrix4("camView", camView)
+  camera.perspective(Math.PI / 3.5, context.aspect(), 1, 10000)
+  program.matrix4("camProj", camera.projection)
+  camera.view.identity().translate([0, -1, -3])
+  program.matrix4("camView", camera.view)
 
   normalMatrix.set(cube_mesh.modelMatrix).invert().transpose()
   program.matrix4("model", cube_mesh.modelMatrix)
