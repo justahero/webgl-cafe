@@ -54,7 +54,7 @@ texture = null
 ambientColor = new Cafe.Color(0.1, 0.1, 0.1)
 direction = vec3.fromValues(0.5, 1, 1)
 directionalLight = new Cafe.DirectionalLight(
-  new Cafe.Color(0.8, 0.8, 0.8), vec3.normalize(direction, direction)
+  new Cafe.Color(0.5, 0.5, 0.5), vec3.normalize(direction, direction)
 )
 
 program = null
@@ -86,7 +86,7 @@ animate = () ->
   cube_mesh.rotate(angle, [0, 1, 1])
 
 render = (context, canvas) ->
-  context.clearBuffer(Cafe.Color.WHITE)
+  context.clearBuffer(Cafe.Color.BLACK)
 
   camProj.perspective(Math.PI / 3.5, context.aspect(), 1, 10000)
   program.matrix4("camProj", camProj)
