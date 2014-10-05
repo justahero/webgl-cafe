@@ -17,7 +17,11 @@ namespace 'Cafe', (exports) ->
 
     matrix4: (uniformName, matrix) ->
       uniform = @uniformLocation(uniformName)
-      @gl.uniformMatrix4fv(uniform, false, matrix.values);
+      @gl.uniformMatrix4fv(uniform, false, matrix.values)
+
+    vector3: (uniformName, vector3) ->
+      uniform = @uniformLocation(uniformName)
+      @gl.uniform3fv(uniform, vector3.values)
 
     uniform3f: (uniformName, color) ->
       uniform = @uniformLocation(uniformName)

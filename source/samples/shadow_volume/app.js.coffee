@@ -85,7 +85,7 @@ context = null
 
 camera = new Cafe.Camera()
 
-lightView = new Cafe.Matrix4().translate([0, 0, -6]).rotateX(Math.PI / 2).rotateY(Math.PI)
+lightView = new Cafe.Matrix4().translate([0, 2, -8]).rotateX(Math.PI / 3).rotateY(Math.PI * 2)
 lightRot  = Cafe.Matrix3.fromMat4Rot(lightView)
 lightDir  = new Cafe.Vec3(0, -1, 0)
 
@@ -98,7 +98,7 @@ plane_mesh = null
 
 program = null
 
-duration = 3000.0
+duration = 5000.0
 currentTime = Date.now()
 
 initMeshes = (context) ->
@@ -130,12 +130,15 @@ render = (context, canvas) ->
 
   program.matrix4("lightView", lightView)
   program.matrix3("lightRot", lightRot)
+  program.vector3("lightDir", lightDir)
 
   normalMatrix.set(cube_mesh.modelMatrix).invert().transpose()
   program.matrix4("normalMatrix", normalMatrix)
   program.matrix4("model", cube_mesh.modelMatrix)
   program.render(cube_mesh)
 
+  normalMatrix.set(plane_mesh.modelMatrix).invert().transpose()
+  program.matrix4("normalMatrix", normalMatrix)
   program.matrix4("model", plane_mesh.modelMatrix)
   program.render(plane_mesh)
 
