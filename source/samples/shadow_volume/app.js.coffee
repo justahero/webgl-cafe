@@ -9,10 +9,11 @@ shaders =
     uniform mat4 camProj, camView;
     uniform mat4 lightView;
     uniform mat3 lightRot;
+    uniform vec3 lightDir;
     uniform mat4 model;
+    uniform mat4 normalMatrix;
 
-    uniform vec3 directionalColor;
-    uniform vec3 directionalVector;
+    uniform vec3 ambientColor;
 
     attribute highp vec3 position, normal;
 
@@ -20,6 +21,12 @@ shaders =
         vWorldNormal = normal;
         vWorldPosition = model * vec4(position, 1.0);
         gl_Position = camProj * camView * vWorldPosition;
+
+        // apply lighting effect
+        highp vec4 transformedNormal = normalMatrix * vec4(normal, 1.0);
+        highp float directional = max(dot(transformedNormal.xyz, lightDir), 0.0);
+
+        vLighting = ambientColor + directional;
     }
   """
   'main_fragment': """
@@ -84,8 +91,11 @@ camera = new Cafe.Camera()
 
 lightView = new Cafe.Matrix4().translate([0, 0, -6]).rotateX(Math.PI / 2).rotateY(Math.PI)
 lightRot  = Cafe.Matrix3.fromMat4Rot(lightView)
+lightDir  = new Cafe.Vec3(0, -1, 0)
 
-# remove this matrix
+ambientColor = new Cafe.Color(0.1, 0.1, 0.1)
+# directionalLight = new Cafe.DirectionalLight(new Cafe.Color(0.5, 1.0, 0.5), direction)
+
 normalMatrix = new Cafe.Matrix4()
 
 cube_mesh  = null
@@ -121,12 +131,14 @@ render = (context, canvas) ->
 
   camera.perspective(Math.PI / 3.5, context.aspect(), 1, 10000)
   program.matrix4("camProj", camera.projection)
-  camera.lookat([0, 4, 18], [0, -1, 0], [0, 1, 0])
+  camera.lookat([0, 5, 15], [0, -1, 0], [0, 1, 0])
   program.matrix4("camView", camera.view)
 
   program.matrix4("lightView", lightView)
   program.matrix3("lightRot", lightRot)
 
+  normalMatrix.set(cube_mesh.modelMatrix).invert().transpose()
+  program.matrix4("normalMatrix", normalMatrix)
   program.matrix4("model", cube_mesh.modelMatrix)
   program.render(cube_mesh)
 
