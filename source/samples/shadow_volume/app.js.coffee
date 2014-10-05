@@ -4,19 +4,17 @@ shaders =
   'main_vertex': """
     varying vec3 vWorldNormal;
     varying vec4 vWorldPosition;
+    varying highp vec3 vLighting;
 
     uniform mat4 camProj, camView;
-    uniform mat4 lightProj, ligthView;
+    uniform mat4 lightProj, lightView;
     uniform mat3 lightRot;
     uniform mat4 model;
 
-    uniform mat4 normalMatrix;
 
     uniform vec3 ambientColor;
     uniform vec3 directionalColor;
     uniform vec3 directionalVector;
-
-    varying highp vec3 vLighting;
 
     attribute highp vec3 position;
     attribute highp vec3 normal;
@@ -27,11 +25,7 @@ shaders =
 
         gl_Position = camProj * camView * vWorldPosition;
 
-        // apply lighting effect
-        highp vec4 transformedNormal = normalMatrix * vec4(normal, 1.0);
-        highp float directional = max(dot(transformedNormal.xyz, directionalVector), 0.0);
-
-        vLighting = ambientColor + (directionalColor * directional);
+        vLighting = ambientColor;;
     }
   """
   'main_fragment': """
@@ -40,7 +34,7 @@ shaders =
     varying highp vec3 vLighting;
 
     uniform highp mat4 camProj, camView;
-    uniform highp mat4 lightProj, ligthView;
+    uniform highp mat4 lightProj, lightView;
     uniform highp mat3 lightRot;
     uniform highp mat4 model;
 
@@ -73,6 +67,9 @@ shaders =
     void main(void) {
         highp vec3 worldNormal = normalize(vWorldNormal);
 
+        highp vec3 camPos   = (camView * vWorldPosition).xyz;
+        highp vec3 lightPos = (lightView * vWorldPosition).xyz;
+
         gl_FragColor = vec4(vLighting, 1.0);
     }
   """
@@ -81,6 +78,8 @@ canvas  = null
 context = null
 
 camera = new Cafe.Camera()
+
+lightView = new Cafe.Matrix4().translate([0, 0, -6])
 
 # remove this matrix
 normalMatrix = new Cafe.Matrix4()
@@ -127,14 +126,12 @@ render = (context, canvas) ->
   camera.view.identity().translate([0, -1, -3])
   program.matrix4("camView", camera.view)
 
-  normalMatrix.set(cube_mesh.modelMatrix).invert().transpose()
+  program.matrix4("lightView", lightView)
+
   program.matrix4("model", cube_mesh.modelMatrix)
-  program.matrix4("normalMatrix", normalMatrix)
   program.render(cube_mesh)
 
-  normalMatrix.set(plane_mesh.modelMatrix).invert().transpose()
   program.matrix4("model", plane_mesh.modelMatrix)
-  program.matrix4("normalMatrix", normalMatrix)
   program.render(plane_mesh)
 
 renderLoop = (context, canvas) ->
@@ -152,7 +149,5 @@ renderLoop = (context, canvas) ->
   context.useProgram(program)
 
   program.uniform3f("ambientColor", ambientColor)
-  program.uniform3f("directionalColor", directionalLight.color)
-  program.uniform3fv("directionalVector", directionalLight.direction)
 
   renderLoop(context, canvas)
