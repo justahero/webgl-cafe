@@ -7,7 +7,7 @@ shaders =
                  attribute highp vec3 normal;
 
                  uniform highp mat4 modelViewMatrix;
-                 uniform highp mat4 projectionMatrix;
+                 uniform highp mat4 campProj;
                  uniform highp mat4 normalMatrix;
 
                  uniform vec3 ambientColor;
@@ -18,7 +18,7 @@ shaders =
                  varying highp vec3 vLighting;
 
                  void main(void) {
-                     gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1);
+                     gl_Position = campProj * modelViewMatrix * vec4(position, 1);
 
                      // apply lighting effect
                      highp vec4 transformedNormal = normalMatrix * vec4(normal, 1.0);
@@ -43,8 +43,8 @@ shaders =
 canvas  = null
 context = null
 
-projectionMatrix = new Cafe.Matrix4()
-normalMatrix     = new Cafe.Matrix4()
+campProj     = new Cafe.Matrix4()
+normalMatrix = new Cafe.Matrix4()
 
 meshes = []
 
@@ -59,12 +59,6 @@ program = null
 
 duration = 3000.0
 currentTime = Date.now()
-
-resizeCanvas = () ->
-  canvas.width  = window.innerWidth
-  canvas.height = window.innerHeight
-  context.setViewport(0, 0, canvas.width, canvas.height)
-  projectionMatrix.perspective(Math.PI / 3.5, canvas.width / canvas.height, 1, 10000)
 
 initTextures = (context) ->
   texture = new Cafe.Texture(context.gl, '/resources/images/water512.jpg')
@@ -101,8 +95,9 @@ animate = () ->
 
 render = (context, canvas) ->
   context.clearBuffer(Cafe.Color.WHITE)
+  campProj.perspective(Math.PI / 3.5, canvas.width / canvas.height, 1, 10000)
 
-  program.matrix4("projectionMatrix", projectionMatrix)
+  program.matrix4("campProj", campProj)
   program.bindTexture("uSampler", texture)
 
   for mesh in meshes
@@ -117,8 +112,6 @@ renderLoop = (context, canvas) ->
   animate()
 
 @main = ->
-  window.onresize = resizeCanvas
-
   canvas  = document.getElementById('webglcanvas')
   context = new Cafe.Context(canvas)
 
@@ -131,7 +124,5 @@ renderLoop = (context, canvas) ->
   program.uniform3f("ambientColor", ambientColor)
   program.uniform3f("directionalColor", directionalLight.color)
   program.uniform3fv("directionalVector", directionalLight.direction)
-
-  resizeCanvas()
 
   renderLoop(context, canvas)

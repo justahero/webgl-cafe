@@ -1,11 +1,15 @@
 namespace 'Cafe', (exports) ->
   class exports.Context
-    constructor: (canvas) ->
+    constructor: (@canvas) ->
       @gl = @_initGlContext(canvas)
-      @setViewport(0, 0, canvas.width, canvas.height)
+      window.onresize = @_resizeCanvas
+      @_resizeCanvas()
 
     setViewport: (x, y, width, height) ->
       @gl.viewport(x, y, width, height)
+
+    aspect: () ->
+      @canvas.width / @canvas.height
 
     clearBuffer: (color = Cafe.Color.WHITE) ->
       @gl.clearColor(color.red, color.green, color.blue, color.alpha)
@@ -21,3 +25,8 @@ namespace 'Cafe', (exports) ->
       catch e
         alert("Unable to initialize WebGl")
       gl
+
+    _resizeCanvas: () =>
+      @canvas.width  = window.innerWidth
+      @canvas.height = window.innerHeight
+      @setViewport(0, 0, @canvas.width, @canvas.height)

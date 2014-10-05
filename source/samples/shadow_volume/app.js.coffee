@@ -62,12 +62,6 @@ program = null
 duration = 3000.0
 currentTime = Date.now()
 
-resizeCanvas = () ->
-  canvas.width  = window.innerWidth
-  canvas.height = window.innerHeight
-  context.setViewport(0, 0, canvas.width, canvas.height)
-  camProj.perspective(Math.PI / 3.5, canvas.width / canvas.height, 1, 10000)
-
 initTextures = (context) ->
   texture = new Cafe.Texture(context.gl, '/resources/images/water512.jpg')
 
@@ -94,6 +88,7 @@ animate = () ->
 render = (context, canvas) ->
   context.clearBuffer(Cafe.Color.WHITE)
 
+  camProj.perspective(Math.PI / 3.5, context.aspect(), 1, 10000)
   program.matrix4("camProj", camProj)
 
   normalMatrix.set(cube_mesh.modelMatrix).invert().transpose()
@@ -112,8 +107,6 @@ renderLoop = (context, canvas) ->
   animate()
 
 @main = ->
-  window.onresize = resizeCanvas
-
   canvas  = document.getElementById('webglcanvas')
   context = new Cafe.Context(canvas)
 
@@ -126,7 +119,5 @@ renderLoop = (context, canvas) ->
   program.uniform3f("ambientColor", ambientColor)
   program.uniform3f("directionalColor", directionalLight.color)
   program.uniform3fv("directionalVector", directionalLight.direction)
-
-  resizeCanvas()
 
   renderLoop(context, canvas)
