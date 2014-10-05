@@ -6,6 +6,7 @@ shaders =
     attribute highp vec3 normal;
 
     uniform mat4 camProj;
+    uniform mat4 camView;
     uniform mat4 normalMatrix;
     uniform mat4 model;
 
@@ -22,7 +23,7 @@ shaders =
         vWorldNormal = normal;
         vWorldPosition = model * vec4(position, 1.0);
 
-        gl_Position = camProj * vWorldPosition;
+        gl_Position = camProj * camView * vWorldPosition;
 
         // apply lighting effect
         highp vec4 transformedNormal = normalMatrix * vec4(normal, 1.0);
@@ -45,6 +46,9 @@ canvas  = null
 context = null
 
 camProj = new Cafe.Matrix4()
+camView = new Cafe.Matrix4()
+
+# remove this matrix
 normalMatrix = new Cafe.Matrix4()
 
 cube_mesh  = null
@@ -86,6 +90,8 @@ render = (context, canvas) ->
 
   camProj.perspective(Math.PI / 3.5, context.aspect(), 1, 10000)
   program.matrix4("camProj", camProj)
+  camView.identity().translate([0, -1, -3])
+  program.matrix4("camView", camView)
 
   normalMatrix.set(cube_mesh.modelMatrix).invert().transpose()
   program.matrix4("model", cube_mesh.modelMatrix)
