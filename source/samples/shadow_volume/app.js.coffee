@@ -7,25 +7,19 @@ shaders =
     varying highp vec3 vLighting;
 
     uniform mat4 camProj, camView;
-    uniform mat4 lightProj, lightView;
+    uniform mat4 lightView;
     uniform mat3 lightRot;
     uniform mat4 model;
 
-
-    uniform vec3 ambientColor;
     uniform vec3 directionalColor;
     uniform vec3 directionalVector;
 
-    attribute highp vec3 position;
-    attribute highp vec3 normal;
+    attribute highp vec3 position, normal;
 
     void main(void) {
         vWorldNormal = normal;
         vWorldPosition = model * vec4(position, 1.0);
-
         gl_Position = camProj * camView * vWorldPosition;
-
-        vLighting = ambientColor;;
     }
   """
   'main_fragment': """
@@ -34,7 +28,7 @@ shaders =
     varying highp vec3 vLighting;
 
     uniform highp mat4 camProj, camView;
-    uniform highp mat4 lightProj, lightView;
+    uniform highp mat4 lightView;
     uniform highp mat3 lightRot;
     uniform highp mat4 model;
 
@@ -72,7 +66,14 @@ shaders =
         highp vec3 lightPosNormal     = normalize(lightPos);
         highp vec3 lightSurfaceNormal = lightRot * worldNormal;
 
-        gl_FragColor = vec4(vLighting, 1.0);
+        highp vec3 excident = (
+          skyLight(worldNormal) + 
+          lambert(lightSurfaceNormal, -lightPosNormal) *
+          influence(lightPosNormal, 55.0) *
+          attenuation(lightPos)
+        );
+
+        gl_FragColor = vec4(gamma(excident), 1.0);
     }
   """
 
@@ -90,7 +91,6 @@ normalMatrix = new Cafe.Matrix4()
 cube_mesh  = null
 plane_mesh = null
 
-ambientColor = new Cafe.Color(0.1, 0.1, 0.1)
 direction = vec3.fromValues(0.5, 1, 1)
 directionalLight = new Cafe.DirectionalLight(
   new Cafe.Color(0.5, 0.5, 0.5), vec3.normalize(direction, direction)
@@ -130,6 +130,7 @@ render = (context, canvas) ->
   program.matrix4("camView", camera.view)
 
   program.matrix4("lightView", lightView)
+  program.matrix3("lightRot", lightRot)
 
   program.matrix4("model", cube_mesh.modelMatrix)
   program.render(cube_mesh)
@@ -150,7 +151,5 @@ renderLoop = (context, canvas) ->
   initMeshes(context)
 
   context.useProgram(program)
-
-  program.uniform3f("ambientColor", ambientColor)
 
   renderLoop(context, canvas)

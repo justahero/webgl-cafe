@@ -17,6 +17,7 @@ namespace 'Cafe', (exports) ->
 
     perspective: (fov, aspect, near, far) ->
       mat4.perspective(@values, fov, aspect, near, far)
+      this
 
     rotate: (angle, vec3) ->
       mat4.rotate(@values, @values, angle, vec3)
