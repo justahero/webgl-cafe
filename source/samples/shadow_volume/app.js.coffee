@@ -5,7 +5,7 @@ shaders =
     attribute highp vec3 position;
     attribute highp vec3 normal;
 
-    uniform mat4 projectionMatrix;
+    uniform mat4 camProj;
     uniform mat4 normalMatrix;
     uniform mat4 model;
 
@@ -22,7 +22,7 @@ shaders =
         vWorldNormal = normal;
         vWorldPosition = model * vec4(position, 1.0);
 
-        gl_Position = projectionMatrix * vWorldPosition;
+        gl_Position = camProj * vWorldPosition;
 
         // apply lighting effect
         highp vec4 transformedNormal = normalMatrix * vec4(normal, 1.0);
@@ -44,8 +44,8 @@ shaders =
 canvas  = null
 context = null
 
-projectionMatrix = mat4.create()
-normalMatrix     = mat4.create()
+camProj = new Cafe.Matrix4()
+normalMatrix = new Cafe.Matrix4()
 
 cube_mesh  = null
 plane_mesh = null
@@ -66,7 +66,7 @@ resizeCanvas = () ->
   canvas.width  = window.innerWidth
   canvas.height = window.innerHeight
   context.setViewport(0, 0, canvas.width, canvas.height)
-  mat4.perspective(projectionMatrix, Math.PI / 3.5, canvas.width / canvas.height, 1, 10000)
+  camProj.perspective(Math.PI / 3.5, canvas.width / canvas.height, 1, 10000)
 
 initTextures = (context) ->
   texture = new Cafe.Texture(context.gl, '/resources/images/water512.jpg')
@@ -94,16 +94,14 @@ animate = () ->
 render = (context, canvas) ->
   context.clearBuffer(Cafe.Color.WHITE)
 
-  program.matrix4("projectionMatrix", projectionMatrix)
+  program.matrix4("camProj", camProj)
 
-  mat4.invert(normalMatrix, cube_mesh.modelMatrix)
-  mat4.transpose(normalMatrix, normalMatrix)
+  normalMatrix.set(cube_mesh.modelMatrix).invert().transpose()
   program.matrix4("model", cube_mesh.modelMatrix)
   program.matrix4("normalMatrix", normalMatrix)
   program.render(cube_mesh)
 
-  mat4.invert(normalMatrix, plane_mesh.modelMatrix)
-  mat4.transpose(normalMatrix, normalMatrix)
+  normalMatrix.set(plane_mesh.modelMatrix).invert().transpose()
   program.matrix4("model", plane_mesh.modelMatrix)
   program.matrix4("normalMatrix", normalMatrix)
   program.render(plane_mesh)

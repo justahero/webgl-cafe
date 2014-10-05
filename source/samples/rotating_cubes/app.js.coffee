@@ -43,8 +43,8 @@ shaders =
 canvas  = null
 context = null
 
-projectionMatrix = mat4.create()
-normalMatrix     = mat4.create()
+projectionMatrix = new Cafe.Matrix4()
+normalMatrix     = new Cafe.Matrix4()
 
 meshes = []
 
@@ -64,7 +64,7 @@ resizeCanvas = () ->
   canvas.width  = window.innerWidth
   canvas.height = window.innerHeight
   context.setViewport(0, 0, canvas.width, canvas.height)
-  mat4.perspective(projectionMatrix, Math.PI / 3, canvas.width / canvas.height, 1, 10000)
+  projectionMatrix.perspective(Math.PI / 3.5, canvas.width / canvas.height, 1, 10000)
 
 initTextures = (context) ->
   texture = new Cafe.Texture(context.gl, '/resources/images/water512.jpg')
@@ -106,9 +106,7 @@ render = (context, canvas) ->
   program.bindTexture("uSampler", texture)
 
   for mesh in meshes
-    mat4.invert(normalMatrix, mesh.modelMatrix)
-    mat4.transpose(normalMatrix, normalMatrix)
-
+    normalMatrix.set(mesh.modelMatrix).invert().transpose()
     program.matrix4("modelViewMatrix", mesh.modelMatrix)
     program.matrix4("normalMatrix", normalMatrix)
     program.render(mesh)
