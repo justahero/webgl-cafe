@@ -57,10 +57,6 @@ shaders =
         return max(0.0, dot(surfaceNormal, lightDirNormal));
     }
 
-    highp vec3 skyLight(highp vec3 normal) {
-        return vec3(smoothstep(0.0, PI, PI - acos(normal.y))) * 0.4;
-    }
-
     highp vec3 gamma(highp vec3 color) {
         return pow(color, vec3(2.2));
     }
@@ -74,9 +70,9 @@ shaders =
         highp vec3 lightSurfaceNormal = lightRot * worldNormal;
 
         highp vec3 excident = (
-          skyLight(worldNormal) + 
+          vLighting +
           lambert(lightSurfaceNormal, -lightPosNormal) *
-          influence(lightPosNormal, 55.0) *
+          influence(lightPosNormal, 50.0) *
           attenuation(lightPos)
         );
 
@@ -93,8 +89,7 @@ lightView = new Cafe.Matrix4().translate([0, 0, -6]).rotateX(Math.PI / 2).rotate
 lightRot  = Cafe.Matrix3.fromMat4Rot(lightView)
 lightDir  = new Cafe.Vec3(0, -1, 0)
 
-ambientColor = new Cafe.Color(0.1, 0.1, 0.1)
-# directionalLight = new Cafe.DirectionalLight(new Cafe.Color(0.5, 1.0, 0.5), direction)
+ambientColor = new Cafe.Color(0.25, 0.25, 0.25)
 
 normalMatrix = new Cafe.Matrix4()
 
@@ -123,8 +118,7 @@ animate = () ->
 
   fract = deltat / duration
   angle = Math.PI * 2.0 * fract
-
-  # cube_mesh.rotate(angle, [0, 1, 1])
+  cube_mesh.rotate(angle, [0, 1, 1])
 
 render = (context, canvas) ->
   context.clearBuffer(Cafe.Color.BLACK)
@@ -158,5 +152,7 @@ renderLoop = (context, canvas) ->
   initMeshes(context)
 
   context.useProgram(program)
+
+  program.uniform3f("ambientColor", ambientColor)
 
   renderLoop(context, canvas)
