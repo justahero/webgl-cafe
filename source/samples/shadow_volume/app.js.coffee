@@ -16,7 +16,7 @@ shaders =
     attribute highp vec3 position, normal;
 
     void main(void) {
-        vWorldNormal = normal;
+        vWorldNormal = (model * vec4(normal, 1.0)).xyz;
         vWorldPosition = model * vec4(position, 1.0);
         gl_Position = camProj * camView * vWorldPosition;
     }
@@ -79,7 +79,7 @@ context = null
 
 camera = new Cafe.Camera()
 
-lightView = new Cafe.Matrix4().translate([0, 2, -8]).rotateX(Math.PI / 3).rotateY(Math.PI * 2)
+lightView = new Cafe.Matrix4().translate([0, 3, -10]).rotateX(Math.PI / 3.5).rotateY(Math.PI * 2.5)
 lightRot  = Cafe.Matrix3.fromMat4Rot(lightView)
 
 ambientColor = new Cafe.Color(0.25, 0.25, 0.25)
@@ -94,9 +94,9 @@ currentTime = Date.now()
 
 initMeshes = (context) ->
   cube_mesh = Cafe.Mesh.create(context, Cafe.Primitives.Cube.create(1.5), false)
-  cube_mesh.trans([0, 2, 0])
-  plane_mesh = Cafe.Mesh.create(context, Cafe.Primitives.Plane.create(5, 5), false)
-  plane_mesh.trans([0, -1, 0])
+  # cube_mesh.trans([2, 2, 2])
+  plane_mesh = Cafe.Mesh.create(context, Cafe.Primitives.Plane.create(7.5, 7.5), false)
+  # plane_mesh.trans([0, -1, 0])
 
 initShaders = (context) ->
   compiler = new Cafe.WebGlCompiler(context.gl, shaders)
@@ -110,11 +110,12 @@ animate = () ->
   fract = deltat / duration
   angle = Math.PI * 2.0 * fract
   cube_mesh.rotate(angle, [0, 1, 0])
+  plane_mesh.rotate(angle / 2, [0, -1, 0])
 
 render = (context, canvas) ->
   context.clearBuffer(Cafe.Color.BLACK)
 
-  camera.perspective(Math.PI / 3.5, context.aspect(), 1, 10000)
+  camera.perspective(Math.PI / 3, context.aspect(), 1, 10000)
   program.matrix4("camProj", camera.projection)
   camera.lookat([0, 8, 15], [0, 0, 0], [0, 1, 0])
   program.matrix4("camView", camera.view)

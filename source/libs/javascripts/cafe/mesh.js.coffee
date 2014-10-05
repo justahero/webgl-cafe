@@ -24,9 +24,7 @@ namespace 'Cafe', (exports) ->
       gl.drawElements(gl.TRIANGLES, count, gl.UNSIGNED_SHORT, offset * 2)
 
     rotate: (angle, vec3) ->
-      # mat4.rotate(@modelMatrix, @modelMatrix, angle, vec3)
       @modelMatrix.rotate(angle, vec3)
 
     trans: (vec3) ->
-      # mat4.translate(@modelMatrix, @modelMatrix, vec3)
       @modelMatrix.translate(vec3)
