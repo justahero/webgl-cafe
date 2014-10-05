@@ -91,20 +91,15 @@ normalMatrix = new Cafe.Matrix4()
 cube_mesh  = null
 plane_mesh = null
 
-direction = vec3.fromValues(0.5, 1, 1)
-directionalLight = new Cafe.DirectionalLight(
-  new Cafe.Color(0.5, 0.5, 0.5), vec3.normalize(direction, direction)
-)
-
 program = null
 
 duration = 3000.0
 currentTime = Date.now()
 
 initMeshes = (context) ->
-  cube_mesh = Cafe.Mesh.create(context, Cafe.Primitives.Cube.create(0.25), false)
+  cube_mesh = Cafe.Mesh.create(context, Cafe.Primitives.Cube.create(0.4), false)
   cube_mesh.trans([0, 0, -5])
-  plane_mesh = Cafe.Mesh.create(context, Cafe.Primitives.Plane.create(2, 2), false)
+  plane_mesh = Cafe.Mesh.create(context, Cafe.Primitives.Plane.create(4, 4), false)
   plane_mesh.trans([0, -1, -5])
 
 initShaders = (context) ->
@@ -119,14 +114,14 @@ animate = () ->
   fract = deltat / duration
   angle = Math.PI * 2.0 * fract
 
-  cube_mesh.rotate(angle, [0, 1, 1])
+  # cube_mesh.rotate(angle, [0, 1, 1])
 
 render = (context, canvas) ->
   context.clearBuffer(Cafe.Color.BLACK)
 
   camera.perspective(Math.PI / 3.5, context.aspect(), 1, 10000)
   program.matrix4("camProj", camera.projection)
-  camera.view.identity().translate([0, -1, -3])
+  camera.view.identity().translate([0, -1, -5])
   program.matrix4("camView", camera.view)
 
   program.matrix4("lightView", lightView)
