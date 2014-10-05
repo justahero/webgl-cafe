@@ -2,13 +2,12 @@
 
 shaders =
   'main_vertex': """
-    attribute highp vec3 position;
-    attribute highp vec3 normal;
-
-    uniform mat4 camProj;
-    uniform mat4 camView;
-    uniform mat4 normalMatrix;
+    uniform mat4 camProj, camView;
     uniform mat4 model;
+    uniform mat4 lightProj, ligthView;
+    uniform mat3 lightRot;
+
+    uniform mat4 normalMatrix;
 
     uniform vec3 ambientColor;
     uniform vec3 directionalColor;
@@ -18,6 +17,9 @@ shaders =
 
     varying vec3 vWorldNormal;
     varying vec4 vWorldPosition;
+
+    attribute highp vec3 position;
+    attribute highp vec3 normal;
 
     void main(void) {
         vWorldNormal = normal;
@@ -32,12 +34,40 @@ shaders =
         vLighting = ambientColor + (directionalColor * directional);
     }
   """
-  'main_fragment': """
+  'main_fragment': """//essl
+    highp float PI = 3.14159265358979323846264;
+
+    highp float attenuation(highp vec3 dir){
+        highp float dist = length(dir);
+        highp float radiance = 1.0 / (1.0 + pow(dist / 10.0, 2.0));
+        return clamp(radiance * 10.0, 0.0, 1.0);
+    }
+
+
+    highp float influence(highp vec3 normal, highp float coneAngle){
+        highp float minConeAngle = ((360.0 - coneAngle - 10.0) / 360.0) * PI;
+        highp float maxConeAngle = ((360.0 - coneAngle) / 360.0) * PI;
+        return smoothstep(minConeAngle, maxConeAngle, acos(normal.z));
+    }
+
+    highp float lambert(highp vec3 surfaceNormal, highp vec3 lightDirNormal) {
+        return max(0.0, dot(surfaceNormal, lightDirNormal));
+    }
+
+    highp vec3 skyLight(highp vec3 normal) {
+        return vec3(smoothstep(0.0, PI, PI - acos(normal.y))) * 0.4;
+    }
+
+    highp vec3 gamma(highp vec3 color) {
+        return pow(color, vec3(2.2));
+    }
+
+    varying highp vec3 vWorldNormal;
     varying highp vec3 vLighting;
 
-    uniform sampler2D uSampler;
-
     void main(void) {
+        highp vec3 worldNormal = normalize(vWorldNormal);
+
         gl_FragColor = vec4(vLighting, 1.0);
     }
   """
