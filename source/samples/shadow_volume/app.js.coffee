@@ -9,9 +9,7 @@ shaders =
     uniform mat4 camProj, camView;
     uniform mat4 lightView;
     uniform mat3 lightRot;
-    uniform vec3 lightDir;
     uniform mat4 model;
-    uniform mat4 normalMatrix;
 
     uniform vec3 ambientColor;
 
@@ -21,12 +19,6 @@ shaders =
         vWorldNormal = normal;
         vWorldPosition = model * vec4(position, 1.0);
         gl_Position = camProj * camView * vWorldPosition;
-
-        // apply lighting effect
-        highp vec4 transformedNormal = normalMatrix * vec4(normal, 1.0);
-        highp float directional = max(dot(transformedNormal.xyz, lightDir), 0.0);
-
-        vLighting = ambientColor + directional;
     }
   """
   'main_fragment': """
@@ -38,6 +30,8 @@ shaders =
     uniform highp mat4 lightView;
     uniform highp mat3 lightRot;
     uniform highp mat4 model;
+
+    uniform highp vec3 ambientColor;
 
     highp float PI = 3.14159265358979323846264;
 
@@ -70,7 +64,7 @@ shaders =
         highp vec3 lightSurfaceNormal = lightRot * worldNormal;
 
         highp vec3 excident = (
-          vLighting +
+          ambientColor +
           lambert(lightSurfaceNormal, -lightPosNormal) *
           influence(lightPosNormal, 50.0) *
           attenuation(lightPos)
@@ -87,23 +81,20 @@ camera = new Cafe.Camera()
 
 lightView = new Cafe.Matrix4().translate([0, 2, -8]).rotateX(Math.PI / 3).rotateY(Math.PI * 2)
 lightRot  = Cafe.Matrix3.fromMat4Rot(lightView)
-lightDir  = new Cafe.Vec3(0, -1, 0)
 
 ambientColor = new Cafe.Color(0.25, 0.25, 0.25)
-
-normalMatrix = new Cafe.Matrix4()
 
 cube_mesh  = null
 plane_mesh = null
 
 program = null
 
-duration = 5000.0
+duration = 8000.0
 currentTime = Date.now()
 
 initMeshes = (context) ->
-  cube_mesh = Cafe.Mesh.create(context, Cafe.Primitives.Cube.create(0.5), false)
-  cube_mesh.trans([0, 0, 0])
+  cube_mesh = Cafe.Mesh.create(context, Cafe.Primitives.Cube.create(1.5), false)
+  cube_mesh.trans([0, 2, 0])
   plane_mesh = Cafe.Mesh.create(context, Cafe.Primitives.Plane.create(5, 5), false)
   plane_mesh.trans([0, -1, 0])
 
@@ -118,27 +109,22 @@ animate = () ->
 
   fract = deltat / duration
   angle = Math.PI * 2.0 * fract
-  cube_mesh.rotate(angle, [0, 1, 1])
+  cube_mesh.rotate(angle, [0, 1, 0])
 
 render = (context, canvas) ->
   context.clearBuffer(Cafe.Color.BLACK)
 
   camera.perspective(Math.PI / 3.5, context.aspect(), 1, 10000)
   program.matrix4("camProj", camera.projection)
-  camera.lookat([0, 5, 15], [0, -1, 0], [0, 1, 0])
+  camera.lookat([0, 8, 15], [0, 0, 0], [0, 1, 0])
   program.matrix4("camView", camera.view)
 
   program.matrix4("lightView", lightView)
   program.matrix3("lightRot", lightRot)
-  program.vector3("lightDir", lightDir)
 
-  normalMatrix.set(cube_mesh.modelMatrix).invert().transpose()
-  program.matrix4("normalMatrix", normalMatrix)
   program.matrix4("model", cube_mesh.modelMatrix)
   program.render(cube_mesh)
 
-  normalMatrix.set(plane_mesh.modelMatrix).invert().transpose()
-  program.matrix4("normalMatrix", normalMatrix)
   program.matrix4("model", plane_mesh.modelMatrix)
   program.render(plane_mesh)
 
