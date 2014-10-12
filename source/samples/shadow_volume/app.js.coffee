@@ -4,7 +4,6 @@ shaders =
   'main_vertex': """
     varying vec3 vWorldNormal;
     varying vec4 vWorldPosition;
-    varying highp vec3 vLighting;
 
     uniform mat4 camProj, camView;
     uniform mat4 lightView;
@@ -24,7 +23,6 @@ shaders =
   'main_fragment': """
     varying highp vec3 vWorldNormal;
     varying highp vec4 vWorldPosition;
-    varying highp vec3 vLighting;
 
     uniform highp mat4 camProj, camView;
     uniform highp mat4 lightView;
