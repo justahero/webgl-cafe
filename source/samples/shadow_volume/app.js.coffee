@@ -79,7 +79,7 @@ context = null
 
 camera = new Cafe.Camera()
 
-lightView = new Cafe.Matrix4().translate([0, 3, -10]).rotateX(Math.PI / 3.5).rotateY(Math.PI * 2.5)
+lightView = new Cafe.Matrix4().translate([0, 2.5, -7.5]).rotateX(Math.PI / 4.5).rotateY(Math.PI * 2.25)
 lightRot  = Cafe.Matrix3.fromMat4Rot(lightView)
 
 ambientColor = new Cafe.Color(0.25, 0.25, 0.25)
@@ -93,10 +93,11 @@ duration = 8000.0
 currentTime = Date.now()
 
 initMeshes = (context) ->
-  cube_mesh = Cafe.Mesh.create(context, Cafe.Primitives.Cube.create(1.5), false)
-  # cube_mesh.trans([2, 2, 2])
+  cube_mesh = Cafe.Mesh.create(context, Cafe.Primitives.Cube.create(1.3), false)
+  cube_mesh.translate([0, 1.0, 0])
   plane_mesh = Cafe.Mesh.create(context, Cafe.Primitives.Plane.create(7.5, 7.5), false)
-  # plane_mesh.trans([0, -1, 0])
+  plane_mesh.translate([0, -0.99, 0])
+  # plane_mesh.translate([0, -1, 0])
 
 initShaders = (context) ->
   compiler = new Cafe.WebGlCompiler(context.gl, shaders)

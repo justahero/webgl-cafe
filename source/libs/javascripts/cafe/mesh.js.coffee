@@ -26,5 +26,5 @@ namespace 'Cafe', (exports) ->
     rotate: (angle, vec3) ->
       @modelMatrix.rotate(angle, vec3)
 
-    trans: (vec3) ->
+    translate: (vec3) ->
       @modelMatrix.translate(vec3)

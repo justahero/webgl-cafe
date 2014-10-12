@@ -19,8 +19,8 @@ namespace 'Cafe', (exports) ->
       mat4.perspective(@values, fov, aspect, near, far)
       this
 
-    rotate: (rad, vec3) ->
-      mat4.rotate(@values, @values, rad, vec3)
+    rotate: (rad, vector) ->
+      mat4.rotate(@values, @values, rad, vector)
       this
 
     rotateX: (rad) ->
@@ -31,8 +31,8 @@ namespace 'Cafe', (exports) ->
       mat4.rotateY(@values, @values, rad)
       this
 
-    translate: (vec3) ->
-      mat4.translate(@values, @values, vec3)
+    translate: (pos) ->
+      mat4.translate(@values, @values, pos)
       this
 
     invert: () ->
