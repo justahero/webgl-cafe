@@ -1,0 +1,1 @@
+(function(){namespace("Cafe",function(n){return n.Math=function(){function n(){}return n.gradToRad=function(t){return n.PI*t/180},n}()})}).call(this);

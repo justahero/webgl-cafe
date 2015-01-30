@@ -1,0 +1,1 @@
+(function(){namespace("Cafe",function(t){return t.Matrix3=function(){function t(){this.values=mat3.create()}return t.fromMat4Rot=function(t){var n;return n=new Cafe.Matrix3,t.toMat3Rot(n),n},t}()})}).call(this);

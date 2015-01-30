@@ -1,0 +1,1 @@
+(function(){namespace("Cafe",function(t){return t.Camera=function(){function t(){this.projection=new Cafe.Matrix4,this.view=new Cafe.Matrix4}return t.prototype.perspective=function(t,e,i,n){return this.projection.perspective(t,e,i,n)},t.prototype.lookat=function(t,e,i){return this.view.identity(),mat4.lookAt(this.view.values,t,e,i)},t}()})}).call(this);

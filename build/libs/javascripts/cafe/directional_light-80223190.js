@@ -1,0 +1,1 @@
+(function(){namespace("Cafe",function(n){return n.DirectionalLight=function(){function n(n,i){this.color=n,this.direction=i}return n}()})}).call(this);

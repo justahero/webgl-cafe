@@ -1,0 +1,1 @@
+(function(){namespace("Cafe",function(n){return n.AmbientLight=function(){function n(n){this.color=n}return n}()})}).call(this);
