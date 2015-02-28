@@ -2,12 +2,12 @@
 
 shaders =
   'main_vertex': """
-                 attribute highp vec3 vertexPos;
+                 attribute highp vec3 position;
                  attribute highp vec2 texCoord;
-                 attribute highp vec3 normalPos;
+                 attribute highp vec3 normal;
 
                  uniform highp mat4 modelViewMatrix;
-                 uniform highp mat4 projectionMatrix;
+                 uniform highp mat4 campProj;
                  uniform highp mat4 normalMatrix;
 
                  uniform vec3 ambientColor;
@@ -18,10 +18,10 @@ shaders =
                  varying highp vec3 vLighting;
 
                  void main(void) {
-                     gl_Position = projectionMatrix * modelViewMatrix * vec4(vertexPos, 1);
+                     gl_Position = campProj * modelViewMatrix * vec4(position, 1);
 
                      // apply lighting effect
-                     highp vec4 transformedNormal = normalMatrix * vec4(normalPos, 1.0);
+                     highp vec4 transformedNormal = normalMatrix * vec4(normal, 1.0);
                      highp float directional = max(dot(transformedNormal.xyz, directionalVector), 0.0);
 
                      vLighting = ambientColor + (directionalColor * directional);
@@ -43,8 +43,8 @@ shaders =
 canvas  = null
 context = null
 
-projectionMatrix = mat4.create()
-normalMatrix     = mat4.create()
+campProj     = new Cafe.Matrix4()
+normalMatrix = new Cafe.Matrix4()
 
 meshes = []
 
@@ -60,21 +60,13 @@ program = null
 duration = 3000.0
 currentTime = Date.now()
 
-resizeCanvas = () ->
-  canvas.width  = window.innerWidth
-  canvas.height = window.innerHeight
-  context.setViewport(0, 0, canvas.width, canvas.height)
-
 initTextures = (context) ->
   texture = new Cafe.Texture(context.gl, '/resources/images/water512.jpg')
 
-initMatrices = (canvas) ->
-  mat4.perspective(projectionMatrix, Math.PI / 3, canvas.width / canvas.height, 1, 10000)
-
 initMeshes = (context) ->
-  numCubes = 16
+  numCubes = 10
   xoffset  = (-numCubes + 1) / 2
-  zoffset  = -24
+  zoffset  = -20
 
   size = 0.25
   cube = Cafe.Primitives.Cube.create(size)
@@ -82,12 +74,8 @@ initMeshes = (context) ->
   for x in [0...numCubes]
     for y in [0...numCubes]
       for z in [0...numCubes]
-        mesh = new Cafe.Mesh()
-        mesh.addVertexBuffer("vertexPos", new Cafe.VertexBuffer(context.gl, cube.vertices, 3))
-        mesh.addVertexBuffer("texCoord", new Cafe.VertexBuffer(context.gl, cube.texcoords, 2))
-        mesh.addVertexBuffer("normalPos", new Cafe.VertexBuffer(context.gl, cube.normals, 3))
-        mesh.setIndexBuffer(new Cafe.IndexBuffer(context.gl, cube.indices))
-        mat4.translate(mesh.modelMatrix, mesh.modelMatrix, [xoffset + y, xoffset + x, zoffset + z])
+        mesh = Cafe.Mesh.create(context, cube)
+        mesh.translate([xoffset + y, xoffset + x, zoffset + z])
         meshes.push mesh
 
 initShaders = (context) ->
@@ -103,23 +91,20 @@ animate = () ->
   angle = Math.PI * 2.0 * fract
 
   for mesh in meshes
-    mat4.rotate(mesh.modelMatrix, mesh.modelMatrix, angle, [0, 1, 1])
+    mesh.rotate(angle, [0, 1, 1])
 
 render = (context, canvas) ->
   context.clearBuffer(Cafe.Color.WHITE)
+  campProj.perspective(Math.PI / 3.5, canvas.width / canvas.height, 1, 10000)
 
+  program.matrix4("campProj", campProj)
   program.bindTexture("uSampler", texture)
 
   for mesh in meshes
-    program.bindMesh(mesh)
-
-    mat4.invert(normalMatrix, mesh.modelMatrix)
-    mat4.transpose(normalMatrix, normalMatrix)
-
-    program.uniformMatrix4fv("modelViewMatrix", mesh.modelMatrix)
-    program.uniformMatrix4fv("normalMatrix", normalMatrix)
-
-    context.drawTriangles(mesh.indexBuffer.size)
+    normalMatrix.set(mesh.modelMatrix).invert().transpose()
+    program.matrix4("modelViewMatrix", mesh.modelMatrix)
+    program.matrix4("normalMatrix", normalMatrix)
+    program.render(mesh)
 
 renderLoop = (context, canvas) ->
   requestAnimationFrame(-> renderLoop(context, canvas))
@@ -127,23 +112,17 @@ renderLoop = (context, canvas) ->
   animate()
 
 @main = ->
-  window.onresize = resizeCanvas
-
   canvas  = document.getElementById('webglcanvas')
   context = new Cafe.Context(canvas)
 
-  initMatrices(canvas)
   initTextures(context)
   initShaders(context)
   initMeshes(context)
 
   context.useProgram(program)
 
-  program.uniformMatrix4fv("projectionMatrix", projectionMatrix)
   program.uniform3f("ambientColor", ambientColor)
   program.uniform3f("directionalColor", directionalLight.color)
   program.uniform3fv("directionalVector", directionalLight.direction)
-
-  resizeCanvas()
 
   renderLoop(context, canvas)

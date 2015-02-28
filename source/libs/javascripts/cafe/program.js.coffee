@@ -7,9 +7,21 @@ namespace 'Cafe', (exports) ->
       @_uniformsMap   = null
       @_link(@gl)
 
-    uniformMatrix4fv: (uniformName, matrix) ->
+    render: (mesh) ->
+      @_bindMesh(mesh)
+      mesh.render(@gl, mesh.indexBuffer.size)
+
+    matrix3: (uniformName, matrix) ->
       uniform = @uniformLocation(uniformName)
-      @gl.uniformMatrix4fv(uniform, false, matrix);
+      @gl.uniformMatrix3fv(uniform, false, matrix.values)
+
+    matrix4: (uniformName, matrix) ->
+      uniform = @uniformLocation(uniformName)
+      @gl.uniformMatrix4fv(uniform, false, matrix.values)
+
+    vector3: (uniformName, vector3) ->
+      uniform = @uniformLocation(uniformName)
+      @gl.uniform3fv(uniform, vector3.values)
 
     uniform3f: (uniformName, color) ->
       uniform = @uniformLocation(uniformName)
@@ -18,27 +30,6 @@ namespace 'Cafe', (exports) ->
     uniform3fv: (uniformName, vector) ->
       uniform = @uniformLocation(uniformName)
       @gl.uniform3fv(uniform, vector)
-
-    bindVertexBuffer: (attribName, vertexBuffer) ->
-      attribute = @getAttribLocation(attribName)
-      @gl.enableVertexAttribArray(attribute)
-      @gl.bindBuffer(@gl.ARRAY_BUFFER, vertexBuffer.buffer)
-      @gl.vertexAttribPointer(attribute, vertexBuffer.itemSize, @gl.FLOAT, false, 0, 0)
-
-    bindIndexBuffer: (indexBuffer) ->
-      @gl.bindBuffer(@gl.ELEMENT_ARRAY_BUFFER, indexBuffer.buffer)
-
-    bindTexture: (uniformName, texture) ->
-      uniform = @uniformLocation(uniformName)
-      @gl.activeTexture(@gl.TEXTURE0)
-      @gl.bindTexture(texture.type, texture.texture)
-      @gl.uniform1i(uniform, 0)
-
-    bindMesh: (mesh) ->
-      for {name, buffer} in mesh.vertexBuffers
-        @bindVertexBuffer(name, buffer)
-      if mesh.indexBuffer
-        @bindIndexBuffer(mesh.indexBuffer)
 
     getAttribLocation: (attribName) ->
       location = @_attributesMap[attribName]
@@ -57,6 +48,27 @@ namespace 'Cafe', (exports) ->
 
     numUniforms: () ->
       @_uniformsMap.length
+
+    _bindMesh: (mesh) ->
+      for {name, buffer} in mesh.vertexBuffers
+        @_bindVertexBuffer(name, buffer)
+      if mesh.indexBuffer
+        @_bindIndexBuffer(mesh.indexBuffer)
+
+    _bindVertexBuffer: (attribName, vertexBuffer) ->
+      attribute = @getAttribLocation(attribName)
+      @gl.enableVertexAttribArray(attribute)
+      @gl.bindBuffer(@gl.ARRAY_BUFFER, vertexBuffer.buffer)
+      @gl.vertexAttribPointer(attribute, vertexBuffer.itemSize, @gl.FLOAT, false, 0, 0)
+
+    _bindIndexBuffer: (indexBuffer) ->
+      @gl.bindBuffer(@gl.ELEMENT_ARRAY_BUFFER, indexBuffer.buffer)
+
+    bindTexture: (uniformName, texture) ->
+      uniform = @uniformLocation(uniformName)
+      @gl.activeTexture(@gl.TEXTURE0)
+      @gl.bindTexture(texture.type, texture.texture)
+      @gl.uniform1i(uniform, 0)
 
     _link: (gl) ->
       @program = gl.createProgram()
