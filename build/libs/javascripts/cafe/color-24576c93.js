@@ -1,1 +1,0 @@
-(function(){namespace("Cafe",function(n){return n.Color=function(){function n(n,e,t,i){this.red=n,this.green=e,this.blue=t,this.alpha=null!=i?i:1}return n.WHITE=new n(1,1,1,1),n.BLACK=new n(0,0,0,1),n}()})}).call(this);

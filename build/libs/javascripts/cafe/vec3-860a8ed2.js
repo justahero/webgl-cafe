@@ -1,1 +1,0 @@
-(function(){namespace("Cafe",function(e){return e.Vec3=function(){function e(e,n,t){this.values=vec3.fromValues(e,n,t)}return e.fromValues=function(e,n,t){return new Cafe.Vec3(e,n,t)},e.prototype.normalize=function(){return vec3.normalize(this.value,this.values),this},e}()})}).call(this);
