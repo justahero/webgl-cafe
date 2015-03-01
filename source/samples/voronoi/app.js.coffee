@@ -29,6 +29,7 @@ matrix  = new Cafe.Matrix4()
 
 points  = null
 voronoi = null
+vertices = []
 
 initShaders = (context) ->
   compiler = new Cafe.WebGlCompiler(context.gl, shaders)
@@ -36,12 +37,10 @@ initShaders = (context) ->
 
 initVoronoi = (canvas, context) ->
   voronoi  = new Voronoi.Main()
-  vertices = []
-  for num in [1..100]
+  for num in [1..200]
     x = Cafe.MathHelpers.random(0, canvas.width)
     y = Cafe.MathHelpers.random(0, canvas.height)
-    vertices.push x
-    vertices.push y
+    vertices.push {x: x, y: y}
   points = Cafe.Mesh.create2dPoints(context, vertices)
 
 render = (context, canvas) ->
@@ -51,7 +50,7 @@ render = (context, canvas) ->
   program.matrix4("u_matrix", matrix)
 
   program.render2dPoints(points)
-  # edges = voronoi.calculate(vertices)
+  edges = voronoi.calculate(vertices)
 
 renderLoop = (context, canvas) ->
   requestAnimationFrame(-> renderLoop(context, canvas))

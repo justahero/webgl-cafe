@@ -1,7 +1,7 @@
 namespace 'Cafe', (exports) ->
   class exports.Mesh
     @create2dPoints: (context, points) ->
-      vertices = new Float32Array(points)
+      vertices = new Float32Array(_.flatten(_.map(points, (p) -> [p.x, p.y])))
       mesh = new Cafe.Mesh()
       mesh.addVertexBuffer('position', new Cafe.VertexBuffer(context.gl, vertices, 2))
       mesh
