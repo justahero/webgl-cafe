@@ -7,6 +7,8 @@ namespace 'Cafe', (exports) ->
       @_initialize(vertices)
 
     _initialize: (vertices) ->
+      unless vertices instanceof Float32Array
+        throw "vertices is not of type Float32Arrayy"
       @size   = vertices.length / @itemSize
       @buffer = @gl.createBuffer()
       @gl.bindBuffer(@gl.ARRAY_BUFFER, @buffer)

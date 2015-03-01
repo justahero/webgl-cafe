@@ -5,7 +5,7 @@ namespace 'Cafe', (exports) ->
       @_compile()
 
     _compile: () ->
-      console.log("Comiling shader: \n#{@source}")
+      # console.log("Comiling shader: \n#{@source}")
       @shader = @gl.createShader(@type)
       @gl.shaderSource(@shader, @source)
       @gl.compileShader(@shader)

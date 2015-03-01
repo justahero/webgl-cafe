@@ -1,4 +1,5 @@
 #= require jquery
+#= require underscore/underscore-min.js
 #= require ../vendor/gl-matrix/gl-matrix.js
 #= require cafe
 

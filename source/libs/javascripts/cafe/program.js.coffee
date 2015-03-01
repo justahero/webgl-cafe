@@ -7,6 +7,11 @@ namespace 'Cafe', (exports) ->
       @_uniformsMap   = null
       @_link(@gl)
 
+    render2dPoints: (mesh) ->
+      @_bindMesh(mesh)
+      vb = mesh.vertexBuffer()
+      mesh.render2dPoints(@gl, vb.buffer.size)
+
     render: (mesh) ->
       @_bindMesh(mesh)
       mesh.render(@gl, mesh.indexBuffer.size)
@@ -30,6 +35,10 @@ namespace 'Cafe', (exports) ->
     uniform3fv: (uniformName, vector) ->
       uniform = @uniformLocation(uniformName)
       @gl.uniform3fv(uniform, vector)
+
+    uniform4f: (uniformName, color) ->
+      uniform = @uniformLocation(uniformName)
+      @gl.uniform4f(uniform, color.red, color.green, color.blue, color.alpha)
 
     getAttribLocation: (attribName) ->
       location = @_attributesMap[attribName]
@@ -57,9 +66,9 @@ namespace 'Cafe', (exports) ->
 
     _bindVertexBuffer: (attribName, vertexBuffer) ->
       attribute = @getAttribLocation(attribName)
-      @gl.enableVertexAttribArray(attribute)
       @gl.bindBuffer(@gl.ARRAY_BUFFER, vertexBuffer.buffer)
       @gl.vertexAttribPointer(attribute, vertexBuffer.itemSize, @gl.FLOAT, false, 0, 0)
+      @gl.enableVertexAttribArray(attribute)
 
     _bindIndexBuffer: (indexBuffer) ->
       @gl.bindBuffer(@gl.ELEMENT_ARRAY_BUFFER, indexBuffer.buffer)

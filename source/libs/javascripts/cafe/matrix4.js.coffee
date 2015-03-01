@@ -19,6 +19,10 @@ namespace 'Cafe', (exports) ->
       mat4.perspective(@values, fov, aspect, near, far)
       this
 
+    orthogonal: (left, right, top, bottom, znear = 0, zfar = 1000) ->
+      mat4.ortho(@values, left, right, bottom, top, znear, zfar)
+      this
+
     rotate: (rad, vector) ->
       mat4.rotate(@values, @values, rad, vector)
       this
