@@ -44,7 +44,6 @@ namespace 'Voronoi', (exports) ->
       if l.y == r.y then l.x > r.x else l.y > r.y
 
     _handleSiteEvent: (newsite, root) ->
-      debugger
       lbnd   = @edgeList.leftbnd(newsite)
       rbnd   = lbnd.right
       bottom = lbnd.rightreg(root)
