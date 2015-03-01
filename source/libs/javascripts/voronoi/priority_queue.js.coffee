@@ -28,9 +28,11 @@ namespace 'Voronoi', (exports) ->
         halfedge.vertex = null
 
     insert: (halfedge, point, offset) ->
+      debugger
       halfedge.vertex = { x: point.x, y: point.y }
       halfedge.ystar  = point.y + offset
       @hash.push(halfedge)
+      @hash = @hash.sort(@comparison)
 
     empty: ->
       _.isEmpty(@hash)

@@ -37,7 +37,7 @@ initShaders = (context) ->
 
 initVoronoi = (canvas, context) ->
   voronoi  = new Voronoi.Main()
-  for num in [1..200]
+  for num in [1..10]
     x = Cafe.MathHelpers.random(0, canvas.width)
     y = Cafe.MathHelpers.random(0, canvas.height)
     vertices.push {x: x, y: y}
