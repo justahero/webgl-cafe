@@ -27,9 +27,9 @@ namespace 'Voronoi', (exports) ->
         @hash.splice(index, 1)
         halfedge.vertex = null
 
-    insert: (halfedge, point, offset) ->
-      halfedge.vertex = { x: point.x, y: point.y }
-      halfedge.ystar  = point.y + offset
+    insert: (halfedge, v, offset) ->
+      halfedge.vertex = { x: v.x, y: v.y }
+      halfedge.ystar  = v.y + offset
       @hash.push(halfedge)
       @hash = @hash.sort(@comparison)
 

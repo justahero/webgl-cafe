@@ -74,7 +74,14 @@ namespace 'Voronoi', (exports) ->
       bisector
 
     _insertEdge: (edge, left, right, bottom) ->
-      # TODO
+      bisector = new Voronoi.HalfEdge(edge, 'right')
+      left.insert(bisector)
+
+      bp = { x: 0, y: 0 }
+      if Voronoi.Geometry.intersect(bisector, right, bp)
+        @queue.insert(bisector, bp, Point.distance(bp, bottom))
+
+      bisector
 
     _handleCircleEvent: (lbnd, root) ->
       debugger
