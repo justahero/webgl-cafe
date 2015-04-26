@@ -1,6 +1,9 @@
 namespace 'Voronoi', (exports) ->
   class exports.Geometry
     @bisect: (s1, s2) ->
+      assert(s1 != null)
+      assert(s2 != null)
+
       newedge = new Voronoi.Edge(s1, s2)
       d = Voronoi.Point.subtract(s1, s2)
       adx = Math.abs(d.x)
@@ -19,6 +22,10 @@ namespace 'Voronoi', (exports) ->
       newedge
 
     @intersect: (el1, el2, bp) ->
+      assert(el1 != null)
+      assert(el2 != null)
+      assert(bp  != null)
+
       e  = null
       e1 = el1.edge
       e2 = el2.edge
@@ -36,7 +43,7 @@ namespace 'Voronoi', (exports) ->
       xint = (e1.c * e2.b - e2.c * e1.b) / d
       yint = (e2.c * e1.a - e1.c * e2.a) / d
 
-      if (e1.reg.right.y < e2.reg.right.y) || (e1.reg.right.y == e2.reg.right.y && e1.reg.right.x < e2.reg.right.x)
+      if (e1.reg.right.y < e2.reg.right.y) || ((e1.reg.right.y == e2.reg.right.y) && (e1.reg.right.x < e2.reg.right.x))
         el = el1
         e  = e1
       else
@@ -44,7 +51,7 @@ namespace 'Voronoi', (exports) ->
         e  = e2
 
       right_of_site = (xint >= e.reg.right.x)
-      if (right_of_site && el.isLeftEdge) || (!right_of_site && el.isRightEdge)
+      if (right_of_site && el.isLeftEdge()) || (!right_of_site && el.isRightEdge())
         return false
 
       bp.x = xint

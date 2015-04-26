@@ -11,7 +11,7 @@ namespace 'Voronoi', (exports) ->
       unless vertices instanceof Array
         throw "Vertices is not an Array"
 
-      return [] if _.isEmpty(vertices)
+      return [] if vertices.length == 0
 
       sites = @_sortSites(vertices)
       @queue.init(sites)
@@ -22,13 +22,14 @@ namespace 'Voronoi', (exports) ->
       newintstar  = null
 
       while true
-        if !@queue.empty
-          newintstar = @queue.min
-        if sites_count < sites.length && (@queue.empty || @_compare(newsite, newintstar))
+        if !@queue.empty()
+          newintstar = @queue.min()
+
+        if sites_count < sites.length && (@queue.empty() || @_compare(newsite, newintstar))
           @_handleSiteEvent(newsite, root)
           newsite = sites[sites_count++]
-        else if !@queue.empty
-          lbnd = @queue.extractMin
+        else if !@queue.empty()
+          lbnd = @queue.extractMin()
           @_handleCircleEvent(lbnd, root)
         else
           break
@@ -37,7 +38,7 @@ namespace 'Voronoi', (exports) ->
       result = []
       lbnd = @edgeList.leftEnd.right
       while lbnd != @edgeList.rightEnd
-        result.push lbnd.edge
+        result.push(lbnd.edge)
         lbnd = lbnd.right
 
       result
@@ -55,6 +56,7 @@ namespace 'Voronoi', (exports) ->
       bottom = lbnd.rightreg(root)
 
       edge = Voronoi.Geometry.bisect(bottom, newsite)
+
       bisector = @_replaceEdge(edge, lbnd, bottom, 'left')
       @_insertEdge(edge, bisector, rbnd, newsite)
 

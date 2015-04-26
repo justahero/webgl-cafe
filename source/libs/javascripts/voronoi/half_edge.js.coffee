@@ -12,6 +12,10 @@ namespace 'Voronoi', (exports) ->
       assert @left != null
       assert @right != null
 
+      @left.right = @right
+      @right.left = @left
+      @edge = null
+
     left: ->
       @left
 
