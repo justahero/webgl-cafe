@@ -71,28 +71,72 @@ namespace 'Voronoi', (exports) ->
       bp = { x: 0, y: 0 }
       if Voronoi.Geometry.intersect(left, bisector, bp)
         @queue.release(left)
-        @queue.insert(left, bp, Point.distance(bp, bottom))
+        @queue.insert(left, bp, Voronoi.Point.distance(bp, bottom))
 
       bisector
 
     _insertEdge: (edge, left, right, bottom) ->
+      assert(edge != null)
+      assert(left != null)
+
       bisector = new Voronoi.HalfEdge(edge, 'right')
       left.insert(bisector)
 
       bp = { x: 0, y: 0 }
       if Voronoi.Geometry.intersect(bisector, right, bp)
-        @queue.insert(bisector, bp, Point.distance(bp, bottom))
+        @queue.insert(bisector, bp, Voronoi.Point.distance(bp, bottom))
 
       bisector
 
     _handleCircleEvent: (lbnd, root) ->
-      debugger
-      "teest"
+      assert(lbnd != null)
+
+      rbnd   = lbnd.right
+      bottom = lbnd.leftreg(root)
+      top    = lbnd.rightreg(root)
+
+      @_finishEdge(lbnd, rbnd)
+      @queue.release(rbnd)
+
+      pm = 'left'
+      if bottom.y > top.y
+        temp = bottom
+        bottom = top
+        top = temp
+        pm = 'right'
+
+      edge = Voronoi.Geometry.bisect(bottom, top)
+      @_endPoint(edge, pm == 'left' ? 'right' : 'left', lbnd.vertex)
+
+      llbnd = lbnd.left
+      rrbnd = rbnd.right
+      bisector = @_replaceEdge(edge, llbnd, bottom, pm)
+
+      bp = { x: 0, y: 0 }
+      if Voronoi.Geometry.intersect(bisector, rrbnd, bp)
+        @queue.insert(bisector, bp, Voronoi.Point.distance(bp, bottom))
+
+    _finishEdge: (left, right) ->
+      assert(left != null)
+      assert(right != null)
+
+      v = left.vertex
+
+      @_endPoint(left.edge, left.orientation, v)
+      @_endPoint(right.edge, right.orientation, v)
+
+      left.release()
+      right.release()
 
     _endPoint: (edge, orientation, s) ->
+      assert(edge != null)
+      assert(s != null)
+
       if orientation == 'left'
-        edge.ep0 = s
+        edge.ep0 = new Voronoi.Point(s.x, s.y)
         return if edge.ep1 == null
       else
-        edge.ep1 = s
+        edge.ep1 = new Voronoi.Point(s.x, s.y)
         return if edge.ep0 == null
+
+      edge
