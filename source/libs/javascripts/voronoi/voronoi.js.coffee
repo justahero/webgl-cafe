@@ -11,12 +11,11 @@ namespace 'Voronoi', (exports) ->
       unless vertices instanceof Array
         throw "Vertices is not an Array"
 
-      return if _.isEmpty(vertices)
+      return [] if _.isEmpty(vertices)
 
       sites = @_sortSites(vertices)
       @queue.init(sites)
 
-      # @edgeList.
       sites_count = 0
       root        = sites[sites_count++]
       newsite     = sites[sites_count++]
@@ -49,7 +48,26 @@ namespace 'Voronoi', (exports) ->
       bottom = lbnd.rightreg(root)
 
       edge = Voronoi.Geometry.bisect(bottom, newsite)
+      bisector = @_replaceEdge(edge, lbnd, bottom, 'left')
+      @_insertEdge(edge, bisector, rbnd, newsite)
 
+    _replaceEdge: (edge, left, bottom, orientation) ->
+      assert(edge != null)
+      assert(left != null)
+      assert(bottom != null)
+
+      bisector = new Voronoi.HalfEdge(edge, orientation)
+      left.insert(bisector)
+
+      bp = { x: 0, y: 0 }
+      if Voronoi.Geometry.intersect(left, bisector, bp)
+        @queue.release(left)
+        @queue.insert(left, bp, Point.distance(bp, bottom))
+
+      bisector
+
+    _insertEdge: (edge, left, right, bottom) ->
+      # TODO
 
     _handleCircleEvent: (lbnd, root) ->
       debugger

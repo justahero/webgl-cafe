@@ -55,7 +55,6 @@ namespace 'Voronoi', (exports) ->
       @right = insert
 
     rightOf: (p) ->
-      debugger
       fast    = false
       above   = false
       topsite = @edge.reg['right']

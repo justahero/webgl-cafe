@@ -1,4 +1,4 @@
-assert = (condition, description = '') ->
+@assert = (condition, description = '') ->
   unless condition
     if typeof Error != 'undefined'
       throw Error(description)

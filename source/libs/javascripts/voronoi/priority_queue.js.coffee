@@ -4,7 +4,7 @@ namespace 'Voronoi', (exports) ->
       @hash = []
       @comparison
 
-    boundaries: (sites) ->
+    @boundaries: (sites) ->
       xmin = 0.0
       xmax = 0.0
       ymin = 0.0
@@ -19,7 +19,7 @@ namespace 'Voronoi', (exports) ->
       new Cafe.Rect(xmin, ymin, xmax, ymax)
 
     init: (sites) ->
-      @bounds = @boundaries(sites)
+      @bounds = PriorityQueue.boundaries(sites)
 
     release: (halfedge) ->
       if halfedge.vertex != null
@@ -28,7 +28,6 @@ namespace 'Voronoi', (exports) ->
         halfedge.vertex = null
 
     insert: (halfedge, point, offset) ->
-      debugger
       halfedge.vertex = { x: point.x, y: point.y }
       halfedge.ystar  = point.y + offset
       @hash.push(halfedge)
