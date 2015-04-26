@@ -50,7 +50,10 @@ render = (context, canvas) ->
   program.matrix4("u_matrix", matrix)
 
   program.render2dPoints(points)
+
   edges = voronoi.calculate(vertices)
+  lines = Cafe.Mesh.create2dLines(context, edges)
+  program.render2dLines(lines)
 
 renderLoop = (context, canvas) ->
   requestAnimationFrame(-> renderLoop(context, canvas))

@@ -12,6 +12,11 @@ namespace 'Cafe', (exports) ->
       vb = mesh.vertexBuffer()
       mesh.render2dPoints(@gl, vb.buffer.size)
 
+    render2dLines: (mesh) ->
+      @_bindMesh(mesh)
+      vb = mesh.vertexBuffer()
+      mesh.render2dLines(@gl, vb.buffer.size)
+
     render: (mesh) ->
       @_bindMesh(mesh)
       mesh.render(@gl, mesh.indexBuffer.size)

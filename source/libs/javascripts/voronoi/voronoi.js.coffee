@@ -33,7 +33,14 @@ namespace 'Voronoi', (exports) ->
         else
           break
 
-      []
+      # Return the list of edges
+      result = []
+      lbnd = @edgeList.leftEnd.right
+      while lbnd != @edgeList.rightEnd
+        result.push lbnd.edge
+        lbnd = lbnd.right
+
+      result
 
     _sortSites: (vertices) ->
       points = _.map(vertices, (v) -> {x: v.x, y: v.y})
