@@ -24,8 +24,7 @@ namespace 'Voronoi', (exports) ->
 
     release: (halfedge) ->
       if halfedge.vertex != null
-        index = @hash.indexOf(halfedge)
-        @hash.splice(index, 1)
+        @_erase(halfedge)
         halfedge.vertex = null
 
     insert: (halfedge, v, offset) ->
@@ -45,3 +44,8 @@ namespace 'Voronoi', (exports) ->
       edge = _.first(@hash)
       @hash.shift
       edge
+
+    _erase: (halfedge) ->
+      index = @hash.indexOf(halfedge)
+      if index != -1
+        @hash.splice(index, 1)

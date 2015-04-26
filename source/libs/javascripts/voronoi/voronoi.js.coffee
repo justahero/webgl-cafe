@@ -25,7 +25,7 @@ namespace 'Voronoi', (exports) ->
         if !@queue.empty()
           newintstar = @queue.min()
 
-        if sites_count < sites.length && (@queue.empty() || @_compare(newsite, newintstar))
+        if (sites_count < sites.length) && (@queue.empty() || @_compare(newsite, newintstar))
           @_handleSiteEvent(newsite, root)
           newsite = sites[sites_count++]
         else if !@queue.empty()
@@ -51,13 +51,15 @@ namespace 'Voronoi', (exports) ->
       if l.y == r.y then l.x > r.x else l.y > r.y
 
     _handleSiteEvent: (newsite, root) ->
+      assert(newsite != null)
+
       lbnd   = @edgeList.leftbnd(newsite)
       rbnd   = lbnd.right
       bottom = lbnd.rightreg(root)
 
       edge = Voronoi.Geometry.bisect(bottom, newsite)
 
-      bisector = @_replaceEdge(edge, lbnd, bottom, 'left')
+      bisector = @_replaceEdge(edge, lbnd, bottom, 0)
       @_insertEdge(edge, bisector, rbnd, newsite)
 
     _replaceEdge: (edge, left, bottom, orientation) ->
@@ -79,7 +81,7 @@ namespace 'Voronoi', (exports) ->
       assert(edge != null)
       assert(left != null)
 
-      bisector = new Voronoi.HalfEdge(edge, 'right')
+      bisector = new Voronoi.HalfEdge(edge, 1)
       left.insert(bisector)
 
       bp = { x: 0, y: 0 }
@@ -93,20 +95,20 @@ namespace 'Voronoi', (exports) ->
 
       rbnd   = lbnd.right
       bottom = lbnd.leftreg(root)
-      top    = lbnd.rightreg(root)
+      top    = rbnd.rightreg(root)
 
       @_finishEdge(lbnd, rbnd)
       @queue.release(rbnd)
 
-      pm = 'left'
+      pm = 0
       if bottom.y > top.y
         temp = bottom
         bottom = top
         top = temp
-        pm = 'right'
+        pm = 1
 
       edge = Voronoi.Geometry.bisect(bottom, top)
-      @_endPoint(edge, pm == 'left' ? 'right' : 'left', lbnd.vertex)
+      @_endPoint(edge, 1 - pm, lbnd.vertex)
 
       llbnd = lbnd.left
       rrbnd = rbnd.right
@@ -132,11 +134,8 @@ namespace 'Voronoi', (exports) ->
       assert(edge != null)
       assert(s != null)
 
-      if orientation == 'left'
-        edge.ep0 = new Voronoi.Point(s.x, s.y)
-        return if edge.ep1 == null
-      else
-        edge.ep1 = new Voronoi.Point(s.x, s.y)
-        return if edge.ep0 == null
+      edge.ep[orientation] = new Voronoi.Point(s.x, s.y)
+      if edge.ep[1 - orientation] == null
+        return
 
       edge
