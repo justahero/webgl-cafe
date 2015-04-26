@@ -31,7 +31,7 @@ namespace 'Voronoi', (exports) ->
       @orientation == 'left'
 
     isRightEdge: ->
-      !@isLeftEdge
+      @orientation == 'right'
 
     orientation: ->
       @orientation

@@ -26,7 +26,7 @@ namespace 'Voronoi', (exports) ->
       if e1 == null || e2 == null
         return false
 
-      if e1.reg['right'] is e2.reg['right']
+      if e1.reg.right is e2.reg.right
         return false
 
       d = (e1.a * e2.b) - (e1.b * e2.a)
@@ -36,14 +36,14 @@ namespace 'Voronoi', (exports) ->
       xint = (e1.c * e2.b - e2.c * e1.b) / d
       yint = (e2.c * e1.a - e1.c * e2.a) / d
 
-      if (e1.reg['right'].y < e2.reg['right'].y) || (e1.reg['right'].y == e2.reg['right'].y && e1.reg['right'].x < e2.reg['right'].x)
+      if (e1.reg.right.y < e2.reg.right.y) || (e1.reg.right.y == e2.reg.right.y && e1.reg.right.x < e2.reg.right.x)
         el = el1
         e  = e1
       else
         el = el2
         e  = e2
 
-      right_of_site = (xint >= e.reg['right'].x)
+      right_of_site = (xint >= e.reg.right.x)
       if (right_of_site && el.isLeftEdge) || (!right_of_site && el.isRightEdge)
         return false
 

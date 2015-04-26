@@ -1,8 +1,7 @@
 namespace 'Voronoi', (exports) ->
   class exports.PriorityQueue
-    constructor: (comparison) ->
+    constructor: (@comparison) ->
       @hash = []
-      @comparison
 
     @boundaries: (sites) ->
       xmin = 0.0
@@ -13,8 +12,10 @@ namespace 'Voronoi', (exports) ->
       for site in sites
         xmin = Math.min(xmin, site.x)
         xmax = Math.max(xmax, site.x)
-        ymin = _.first(sites).y
-        ymax = _.last(sites).y
+
+      if sites.length > 0
+        ymin = sites[0].y
+        ymax = sites[sites.length - 1].y
 
       new Cafe.Rect(xmin, ymin, xmax, ymax)
 
@@ -34,10 +35,10 @@ namespace 'Voronoi', (exports) ->
       @hash = @hash.sort(@comparison)
 
     empty: ->
-      _.isEmpty(@hash)
+      @hash.length == 0
 
     min: ->
-      first = _.first(@hash)
+      first = @hash[0]
       { x: first.vertex.x, y: first.ystar }
 
     extractMin: ->

@@ -86,3 +86,11 @@ namespace 'Voronoi', (exports) ->
     _handleCircleEvent: (lbnd, root) ->
       debugger
       "teest"
+
+    _endPoint: (edge, orientation, s) ->
+      if orientation == 'left'
+        edge.ep0 = s
+        return if edge.ep1 == null
+      else
+        edge.ep1 = s
+        return if edge.ep0 == null
