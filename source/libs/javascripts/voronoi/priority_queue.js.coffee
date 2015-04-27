@@ -1,7 +1,10 @@
 namespace 'Voronoi', (exports) ->
   class exports.PriorityQueue
-    constructor: (@comparison) ->
+    constructor: ->
       @hash = []
+
+    @comparison = (l, r) ->
+      (l.ystar < r.ystar) || (l.ystar == r.ystar && l.vertex.x < r.vertex.x)
 
     @boundaries: (sites) ->
       xmin = 0.0

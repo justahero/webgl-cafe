@@ -2,10 +2,10 @@ namespace 'Voronoi', (exports) ->
   class exports.Main
     constructor: () ->
       @edgeList = new Voronoi.EdgeList
-      @queue = new Voronoi.PriorityQueue(
-        (l, r) ->
-          (l.ystar < r.ystar) || (l.ystar == r.ystar && l.vertex.x < r.vertex.x)
-        )
+      @queue = new Voronoi.PriorityQueue
+
+    _compare: (a, b) ->
+      if a.y == b.y then a.x < b.x else a.y < b.y
 
     calculate: (vertices) ->
       unless vertices instanceof Array
@@ -45,11 +45,8 @@ namespace 'Voronoi', (exports) ->
 
     _sortSites: (vertices) ->
       points = _.map(vertices, (v) -> new Voronoi.Point(v.x, v.y))
-      points.sort(@_compare)
+      points = points.sort(@_compare)
       points
-
-    _compare: (a, b) ->
-      if a.y == b.y then a.x < b.x else a.y < b.y
 
     _handleSiteEvent: (newsite, root) ->
       assert(newsite != null)
