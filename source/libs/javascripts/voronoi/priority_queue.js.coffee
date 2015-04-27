@@ -27,10 +27,10 @@ namespace 'Voronoi', (exports) ->
         @_erase(halfedge)
         halfedge.vertex = null
 
-    insert: (halfedge, v, offset) ->
-      halfedge.vertex = { x: v.x, y: v.y }
-      halfedge.ystar  = v.y + offset
-      @hash.push(halfedge)
+    insert: (he, v, offset) ->
+      he.vertex = new Voronoi.Point(v.x, v.y)
+      he.ystar  = v.y + offset
+      @hash.push(he)
       @hash = @hash.sort(@comparison)
 
     empty: ->
@@ -38,10 +38,10 @@ namespace 'Voronoi', (exports) ->
 
     min: ->
       first = @hash[0]
-      { x: first.vertex.x, y: first.ystar }
+      new Voronoi.Point(first.vertex.x, first.ystar)
 
     extractMin: ->
-      edge = _.first(@hash)
+      edge = @hash[0]
       @hash.shift
       edge
 

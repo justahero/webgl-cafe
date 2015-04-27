@@ -4,7 +4,7 @@ namespace 'Voronoi', (exports) ->
       @edgeList = new Voronoi.EdgeList
       @queue = new Voronoi.PriorityQueue(
         (l, r) ->
-          (l.ystar > r.ystar) || (l.ystar == r.ystar && l.vertex.x < r.vertex.x)
+          (l.ystar > r.ystar) || (l.ystar == r.ystar && l.vertex.x > r.vertex.x)
         )
 
     calculate: (vertices) ->

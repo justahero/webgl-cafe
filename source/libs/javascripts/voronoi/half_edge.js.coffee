@@ -5,7 +5,7 @@ namespace 'Voronoi', (exports) ->
       @right       = null
       @edge        = edge
       @orientation = orientation
-      @vertex      = 0
+      @vertex      = null
       @ystar       = 0
 
     release: ->
@@ -40,7 +40,10 @@ namespace 'Voronoi', (exports) ->
 
       @edge.reg[(@orientation + 1) % 2]
 
-    insert: (insert) ->
+    insert: (insert) =>
+      assert(insert != null)
+      assert(@right != null)
+
       insert.left  = this
       insert.right = @right
       @right.left  = insert

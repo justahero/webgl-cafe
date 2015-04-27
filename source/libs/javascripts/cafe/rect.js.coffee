@@ -20,5 +20,8 @@ namespace 'Cafe', (exports) ->
     height: ->
       @h
 
+    empty: ->
+      @w == 0 || @h == 0
+
     isInside: (x, y) ->
       @x >= x && y >= @y && x < right && y < bottom
