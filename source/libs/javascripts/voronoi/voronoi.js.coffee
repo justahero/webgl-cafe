@@ -1,8 +1,8 @@
 namespace 'Voronoi', (exports) ->
   class exports.Main
     constructor: () ->
-      @edgeList = new Voronoi.EdgeList
-      @queue = new Voronoi.PriorityQueue
+      @edgeList = new Voronoi.EdgeList()
+      @queue = new Voronoi.PriorityQueue()
 
     _compare: (a, b) ->
       if a.y == b.y then a.x < b.x else a.y < b.y
@@ -45,7 +45,10 @@ namespace 'Voronoi', (exports) ->
 
     _sortSites: (vertices) ->
       points = _.map(vertices, (v) -> new Voronoi.Point(v.x, v.y))
-      points = points.sort(@_compare)
+      points = points.sort(
+        (a, b) ->
+          if a.y == b.y then a.x - B.x else a.y - b.y
+        )
       points
 
     _handleSiteEvent: (newsite, root) ->
@@ -121,12 +124,9 @@ namespace 'Voronoi', (exports) ->
       if Voronoi.Geometry.intersect(bisector, rrbnd, bp)
         @queue.insert(bisector, bp, Voronoi.Point.distance(bp, bottom))
 
-    _endPoint: (edge, orientation, s) ->
-      assert(edge != null)
+    _endPoint: (e, lr, s) ->
+      assert(e != null)
       assert(s != null)
+      assert(lr >= 0 && lr <= 1)
 
-      edge.ep[orientation] = new Voronoi.Point(s.x, s.y)
-      if edge.ep[1 - orientation] == null
-        return
-
-      edge
+      e.ep[lr] = new Voronoi.Point(s.x, s.y)

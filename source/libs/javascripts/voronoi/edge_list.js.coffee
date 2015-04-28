@@ -1,8 +1,8 @@
 namespace 'Voronoi', (exports) ->
   class exports.EdgeList
     constructor: () ->
-      @leftEnd  = new Voronoi.HalfEdge(null, 0)
-      @rightEnd = new Voronoi.HalfEdge(null, 0)
+      @leftEnd  = new Voronoi.HalfEdge()
+      @rightEnd = new Voronoi.HalfEdge()
       @leftEnd.setRight(@rightEnd)
       @rightEnd.setLeft(@leftEnd)
 
