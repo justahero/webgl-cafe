@@ -37,8 +37,12 @@ namespace 'Voronoi', (exports) ->
       # Return the list of edges
       result = []
       lbnd = @edgeList.leftEnd.right
-      while lbnd != @edgeList.rightEnd
-        result.push(lbnd.edge)
+      while lbnd isnt @edgeList.rightEnd
+        e  = lbnd.edge
+        s1 = e.ep[0]
+        s2 = e.ep[1]
+        result.push({ x: s1.x, y: s1.y })
+        result.push({ x: s2.x, y: s2.y })
         lbnd = lbnd.right
 
       result

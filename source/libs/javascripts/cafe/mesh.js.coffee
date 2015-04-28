@@ -1,17 +1,15 @@
 namespace 'Cafe', (exports) ->
   class exports.Mesh
     @create2dPoints: (context, points) ->
-      vertices = new Float32Array(_.flatten(_.map(points, (p) -> [p.x, p.y])))
+      vertices = new Float32Array(_.flatten(_.map(points, (p) -> [p.x, p.y] )))
       mesh = new Cafe.Mesh()
       mesh.addVertexBuffer('position', new Cafe.VertexBuffer(context.gl, vertices, 2))
       mesh
 
-    @create2dLines: (context, edges) ->
-      lines = new Float32Array(_.flatten(_.map(edges, (e) ->
-        [e.point1.x, e.point1.y, e.point2.x, e.point2.y]
-        )))
+    @create2dLines: (context, points) ->
+      lines = new Float32Array(_.flatten(_.map(points, (p) -> [p.x, p.y] )))
       mesh = new Cafe.Mesh()
-      mesh.addVertexBuffer('position', new Cafe.VertexBuffer(context.gl, lines, 4))
+      mesh.addVertexBuffer('position', new Cafe.VertexBuffer(context.gl, lines, 2))
       mesh
 
     @create: (context, primitive, with_texture = true) ->
