@@ -3,6 +3,7 @@ namespace 'Voronoi', (exports) ->
     constructor: () ->
       @edgeList = new Voronoi.EdgeList()
       @queue = new Voronoi.PriorityQueue()
+      @edges = []
 
     _compare: (a, b) ->
       if a.y == b.y then a.x < b.x else a.y < b.y
@@ -15,11 +16,13 @@ namespace 'Voronoi', (exports) ->
 
       sites = @_sortSites(vertices)
       @queue.init(sites)
+      @edges = []
+      @edgeList = new Voronoi.EdgeList()
 
       sites_count = 0
       root        = sites[sites_count++]
       newsite     = sites[sites_count++]
-      newintstar  = null
+      newintstar  = { x: 0, y: 0 }
 
       while true
         if !@queue.empty()
@@ -35,17 +38,12 @@ namespace 'Voronoi', (exports) ->
           break
 
       # Return the list of edges
-      result = []
       lbnd = @edgeList.leftEnd.right
       while lbnd isnt @edgeList.rightEnd
-        e  = lbnd.edge
-        s1 = e.ep[0]
-        s2 = e.ep[1]
-        result.push({ x: s1.x, y: s1.y })
-        result.push({ x: s2.x, y: s2.y })
+        @_clipLine(lbnd.edge)
         lbnd = lbnd.right
 
-      result
+      @edges
 
     _sortSites: (vertices) ->
       points = _.map(vertices, (v) -> new Voronoi.Point(v.x, v.y))
@@ -134,3 +132,94 @@ namespace 'Voronoi', (exports) ->
       assert(lr >= 0 && lr <= 1)
 
       e.ep[lr] = new Voronoi.Point(s.x, s.y)
+      @_clipLine(e)
+
+    _addEdge: (x1, y1, x2, y2) ->
+      @edges.push({ x: x1, y: y1 })
+      @edges.push({ x: x2, y: y2 })
+
+    _clipLine: (e) ->
+      bounds = @queue.bounds
+
+      pxmin = bounds.left()
+      pxmax = bounds.right()
+      pymin = bounds.top()
+      pymax = bounds.bottom()
+      s1 = s2 = null
+      x1 = x2 = y1 = y2 = 0.0
+
+      if e.a == 1.0 && e.b >= 0.0
+        s1 = e.ep[1];
+        s2 = e.ep[0];
+      else
+        s1 = e.ep[0];
+        s2 = e.ep[1];
+
+      if e.a == 1.0
+        y1 = pymin
+        if s1 != null && s1.y > pymin
+          y1 = s1.y
+        if y1 > pymax
+          return null
+
+        x1 = e.c - e.b * y1
+        y2 = pymax
+        if s2 != null && s2.y < pymax
+          y2 = s2.y
+        if y2 < pymin
+          return null
+
+        x2 = e.c - e.b * y2
+
+        if ((x1 > pxmax) && (x2 > pxmax)) || ((x1 < pxmin) && (x2 < pxmin))
+          return null;
+
+        if x1 > pxmax
+          x1 = pxmax
+          y1 = (e.c - x1) / e.b
+
+        if x1 < pxmin
+          x1 = pxmin
+          y1 = (e.c - x1) / e.b
+
+        if x2 > pxmax
+          x2 = pxmax
+          y2 = (e.c - x2) / e.b
+
+        if x2 < pxmin
+          x2 = pxmin
+          y2 = (e.c - x2) / e.b
+
+      else
+        x1 = pxmin
+        if s1 != null && s1.x > pxmin
+          x1 = s1.x
+        if x1 > pxmax
+          return null
+
+        y1 = e.c - e.a * x1
+        x2 = pxmax
+        if s2 != null && s2.x < pxmax
+          x2 = s2.x
+        if x2 < pxmin
+          return null
+
+        y2 = e.c - e.a * x2
+
+        if ((y1 > pymax) && (y2 > pymax)) || ((y1 < pymin) && (y2 < pymin))
+          return null
+
+        if y1 > pymax
+          y1 = pymax
+          x1 = (e.c - y1) / e.a
+        if y1 < pymin
+          y1 = pymin
+          x1 = (e.c - y1) / e.a
+        if y2 > pymax
+          y2 = pymax
+          x2 = (e.c - y2) / e.a
+        if y2 < pymin
+          y2 = pymin
+          x2 = (e.c - y2) / e.a
+
+      @_addEdge(x1, y1, x2, y2)

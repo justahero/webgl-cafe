@@ -24,7 +24,7 @@ namespace 'Voronoi', (exports) ->
         ymin = sites[0].y
         ymax = sites[sites.length - 1].y
 
-      new Cafe.Rect(xmin, ymin, xmax, ymax)
+      { xmin: xmin, ymin: ymin, xmax: xmax, ymax: ymax }
 
     init: (sites) ->
       @bounds = PriorityQueue.boundaries(sites)
