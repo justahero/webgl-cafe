@@ -3,7 +3,7 @@ namespace 'Voronoi', (exports) ->
     constructor: (@x, @y) ->
 
     @subtract: (l, r) ->
-      new Point(r.x - l.x, r.y - l.y)
+      { x: r.x - l.x, y: r.y - l.y }
 
     @dot: (l, r) ->
       l.x * r.x + l.y * r.y
@@ -15,9 +15,6 @@ namespace 'Voronoi', (exports) ->
       dx = r.x - l.x
       dy = r.y - l.y
       Math.sqrt(dx * dx + dy * dy)
-
-    dot: ->
-      @x * @x + @y * @y
 
     length: ->
       Math.sqrt(@dot)

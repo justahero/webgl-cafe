@@ -26,6 +26,7 @@ namespace 'Voronoi', (exports) ->
       { xmin: xmin, ymin: ymin, xmax: xmax, ymax: ymax }
 
     init: (sites) ->
+      @hash.length = 0
       @bounds = PriorityQueue.boundaries(sites)
 
     release: (halfedge) ->

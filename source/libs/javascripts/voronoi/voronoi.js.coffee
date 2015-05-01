@@ -16,13 +16,13 @@ namespace 'Voronoi', (exports) ->
 
       sites = @_sortSites(vertices)
       @queue.init(sites)
-      @edges = []
+      @edges.length = 0
       @edgeList = new Voronoi.EdgeList()
 
       sites_count = 0
       root        = sites[sites_count++]
       newsite     = sites[sites_count++]
-      newintstar  = new Voronoi.Point(0, 0)
+      newintstar  = { x: 0, y: 0 }
 
       while true
         if !@queue.empty()
@@ -46,11 +46,9 @@ namespace 'Voronoi', (exports) ->
       @edges
 
     _sortSites: (vertices) ->
-      points = _.map(vertices, (v) -> new Voronoi.Point(v.x, v.y))
-      points = points.sort(
-        (a, b) ->
-          if a.y == b.y then a.x - B.x else a.y - b.y
-        )
+      points = _.map(vertices, (v) -> { x: v.x, y: v.y })
+      points = vertices.sort(
+        (l, r) -> if l.y == r.y then l.x - r.x else l.y - r.y )
       points
 
     _handleSiteEvent: (newsite, root) ->
@@ -73,7 +71,7 @@ namespace 'Voronoi', (exports) ->
       bisector = new Voronoi.HalfEdge(edge, orientation)
       left.insert(bisector)
 
-      bp = new Voronoi.Point(0, 0)
+      bp = { x: 0, y: 0 }
       if Voronoi.Geometry.intersect(left, bisector, bp)
         @queue.release(left)
         @queue.insert(left, bp, Voronoi.Point.distance(bp, bottom))
@@ -87,7 +85,7 @@ namespace 'Voronoi', (exports) ->
       bisector = new Voronoi.HalfEdge(edge, 1)
       left.insert(bisector)
 
-      bp = new Voronoi.Point(0, 0)
+      bp = { x: 0, y: 0 }
       if Voronoi.Geometry.intersect(bisector, right, bp)
         @queue.insert(bisector, bp, Voronoi.Point.distance(bp, bottom))
 
@@ -122,7 +120,7 @@ namespace 'Voronoi', (exports) ->
       bisector = @_replaceEdge(edge, llbnd, bottom, pm)
       @_endPoint(edge, 1 - pm, v)
 
-      bp = new Voronoi.Point(0, 0)
+      bp = { x: 0, y: 0 }
       if Voronoi.Geometry.intersect(bisector, rrbnd, bp)
         @queue.insert(bisector, bp, Voronoi.Point.distance(bp, bottom))
 
@@ -131,7 +129,7 @@ namespace 'Voronoi', (exports) ->
       assert(s != null)
       assert(lr >= 0 && lr <= 1)
 
-      e.ep[lr] = new Voronoi.Point(s.x, s.y)
+      e.ep[lr] = { x: s.x, y: s.y }
       if e.ep[1 - lr] == null
         return
       @_clipLine(e)
