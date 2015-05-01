@@ -4,7 +4,6 @@ namespace 'Voronoi', (exports) ->
       @hash = []
 
     @comparison = (l, r) ->
-      # if l.ystar == r.ystar then l.vertex - r.vertex.x else l.ystar - r.ystar
       if l.ystar == r.ystar
         l.vertex.x - r.vertex.x
       else
@@ -38,14 +37,18 @@ namespace 'Voronoi', (exports) ->
       he.vertex = new Voronoi.Point(v.x, v.y)
       he.ystar  = v.y + offset
       @hash.push(he)
-      @hash.sort(@comparison)
+      # possibly very slow, can be boiled down to (log N) instead of (N log N)
+      @hash.sort(PriorityQueue.comparison)
+
+    size: ->
+      @hash.length
 
     empty: ->
       @hash.length == 0
 
     min: ->
-      first = @hash[0]
-      new Voronoi.Point(first.vertex.x, first.ystar)
+      v = @hash[0]
+      { x: v.vertex.x, y: v.ystar }
 
     extractMin: ->
       assert(@hash.length > 0)

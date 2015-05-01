@@ -22,7 +22,7 @@ namespace 'Voronoi', (exports) ->
       sites_count = 0
       root        = sites[sites_count++]
       newsite     = sites[sites_count++]
-      newintstar  = { x: 0, y: 0 }
+      newintstar  = new Voronoi.Point(0, 0)
 
       while true
         if !@queue.empty()
@@ -132,6 +132,8 @@ namespace 'Voronoi', (exports) ->
       assert(lr >= 0 && lr <= 1)
 
       e.ep[lr] = new Voronoi.Point(s.x, s.y)
+      if e.ep[1 - lr] == null
+        return
       @_clipLine(e)
 
     _addEdge: (x1, y1, x2, y2) ->
