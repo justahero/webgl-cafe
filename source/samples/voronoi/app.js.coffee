@@ -30,6 +30,7 @@ matrix  = new Cafe.Matrix4()
 points  = null
 voronoi = null
 vertices = []
+lastTime = 0
 
 initShaders = (context) ->
   compiler = new Cafe.WebGlCompiler(context.gl, shaders)
@@ -43,7 +44,7 @@ initVoronoi = (canvas, context) ->
     vertices.push {x: x, y: y}
   points = Cafe.Mesh.create2dPoints(context, vertices)
 
-render = (context, canvas) ->
+render = (context, canvas, elapsedTime) ->
   context.clearBuffer(Cafe.Color.BLACK)
 
   matrix.orthogonal(0, canvas.width, 0, canvas.height)
@@ -55,9 +56,10 @@ render = (context, canvas) ->
   lines = Cafe.Mesh.create2dLines(context, edges)
   program.render2dLines(lines)
 
-renderLoop = (context, canvas) ->
-  requestAnimationFrame(-> renderLoop(context, canvas))
-  render(context, canvas)
+renderLoop = (context, canvas, time = 0) ->
+  requestAnimationFrame((time) -> renderLoop(context, canvas, time))
+  render(context, canvas, time - lastTime)
+  lastTime = time
 
 @main = ->
   canvas  = document.getElementById('webglcanvas')
