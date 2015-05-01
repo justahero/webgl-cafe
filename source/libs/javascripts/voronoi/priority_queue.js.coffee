@@ -37,9 +37,8 @@ namespace 'Voronoi', (exports) ->
     insert: (he, v, offset) ->
       he.vertex = new Voronoi.Point(v.x, v.y)
       he.ystar  = v.y + offset
-      @hash.push(he)
-      # possibly very slow, can be boiled down to (log N) instead of (N log N)
-      @hash.sort(PriorityQueue.comparison)
+      index = @_binaryIndex(he, @hash)
+      @hash.splice(index, 0, he)
 
     size: ->
       @hash.length
@@ -59,3 +58,16 @@ namespace 'Voronoi', (exports) ->
       index = @hash.indexOf(halfedge)
       if index != -1
         @hash.splice(index, 1)
+
+    _binaryIndex: (entry, list) ->
+      lower  = 0
+      upper  = list.length
+
+      while lower < upper
+        current = (lower + upper) >>> 1
+        if PriorityQueue.comparison(list[current], entry) < 0.0
+          lower = current + 1
+        else
+          upper = current
+
+      lower
