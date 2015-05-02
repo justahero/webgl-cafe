@@ -134,10 +134,6 @@ namespace 'Voronoi', (exports) ->
         return
       @_clipLine(e)
 
-    _addEdge: (x1, y1, x2, y2) ->
-      @edges.push({ x: x1, y: y1 })
-      @edges.push({ x: x2, y: y2 })
-
     _clipLine: (e) ->
       bounds = @queue.bounds
 
@@ -222,4 +218,4 @@ namespace 'Voronoi', (exports) ->
           y2 = pymin
           x2 = (e.c - y2) / e.a
 
-      @_addEdge(x1, y1, x2, y2)
+      @edges.push({ x1: x1, y1: y1, x2: x2, y2: y2 })

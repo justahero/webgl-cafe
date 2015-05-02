@@ -30,6 +30,7 @@ matrix  = new Cafe.Matrix4()
 points  = null
 voronoi = null
 vertices = []
+directions = []
 lastTime = 0
 
 initShaders = (context) ->
@@ -41,8 +42,20 @@ initVoronoi = (canvas, context) ->
   for num in [1..100]
     x = Cafe.MathHelpers.random(0, canvas.width)
     y = Cafe.MathHelpers.random(0, canvas.height)
-    vertices.push {x: x, y: y}
+    vertices.push({ x: x, y: y })
+
+    dx = Math.random() - 0.5
+    dy = Math.random() - 0.5
+    directions.push({ x: dx, y: dy })
+
   points = Cafe.Mesh.create2dPoints(context, vertices)
+
+updateAnimation = (canvas, elapsedTime) ->
+  console.log("elapsedTime: #{elapsedTime}")
+  w = canvas.width
+  h = canvas.height
+
+  # TODO animate points
 
 render = (context, canvas, elapsedTime) ->
   context.clearBuffer(Cafe.Color.BLACK)
@@ -58,6 +71,7 @@ render = (context, canvas, elapsedTime) ->
 
 renderLoop = (context, canvas, time = 0) ->
   requestAnimationFrame((time) -> renderLoop(context, canvas, time))
+  updateAnimation(canvas, time - lastTime)
   render(context, canvas, time - lastTime)
   lastTime = time
 

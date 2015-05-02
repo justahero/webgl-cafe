@@ -6,10 +6,16 @@ namespace 'Cafe', (exports) ->
       mesh.addVertexBuffer('position', new Cafe.VertexBuffer(context.gl, vertices, 2))
       mesh
 
-    @create2dLines: (context, points) ->
-      lines = new Float32Array(_.flatten(_.map(points, (p) -> [p.x, p.y] )))
+    @create2dLines: (context, lines) ->
+      edges = []
+      for line in lines
+        edges.push(line.x1)
+        edges.push(line.y1)
+        edges.push(line.x2)
+        edges.push(line.y2)
+
       mesh = new Cafe.Mesh()
-      mesh.addVertexBuffer('position', new Cafe.VertexBuffer(context.gl, lines, 2))
+      mesh.addVertexBuffer('position', new Cafe.VertexBuffer(context.gl, new Float32Array(edges), 2))
       mesh
 
     @create: (context, primitive, with_texture = true) ->
