@@ -64,7 +64,7 @@ namespace 'Voronoi', (exports) ->
         return false
 
       if edge.a == 1.0
-        d = Voronoi.Point.subtract(topsite, p)
+        d = Voronoi.Geometry.subtract(topsite, p)
 
         if (!right_of_site & (edge.b < 0.0)) || (right_of_site & (edge.b >= 0.0))
           fast  = (d.y >= (edge.b * d.x))

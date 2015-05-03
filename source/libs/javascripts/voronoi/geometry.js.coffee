@@ -1,14 +1,28 @@
 namespace 'Voronoi', (exports) ->
   class exports.Geometry
+    @subtract: (l, r) ->
+      { x: r.x - l.x, y: r.y - l.y }
+
+    @length: (x, y) ->
+      Math.sqrt(x * x + y * y)
+
+    @dot: (l, r) ->
+      l.x * r.x + l.y * r.y
+
+    @distance: (l, r) ->
+      dx = r.x - l.x
+      dy = r.y - l.y
+      Math.sqrt(dx * dx + dy * dy)
+
     @bisect: (s1, s2) ->
       assert(s1 != null)
       assert(s2 != null)
 
       newedge = new Voronoi.Edge(s1, s2)
-      d = Voronoi.Point.subtract(s1, s2)
+      d = Voronoi.Geometry.subtract(s1, s2)
       adx = Math.abs(d.x)
       ady = Math.abs(d.y)
-      newedge.c = Voronoi.Point.dot(s1, d) + Voronoi.Point.dot(d, d) * 0.5
+      newedge.c = Voronoi.Geometry.dot(s1, d) + Voronoi.Geometry.dot(d, d) * 0.5
 
       if adx > ady
         newedge.a = 1.0

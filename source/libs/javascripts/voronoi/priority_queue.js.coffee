@@ -35,7 +35,7 @@ namespace 'Voronoi', (exports) ->
         halfedge.vertex = null
 
     insert: (he, v, offset) ->
-      he.vertex = new Voronoi.Point(v.x, v.y)
+      he.vertex = { x: v.x, y: v.y }
       he.ystar  = v.y + offset
       index = @_binaryIndex(he, @hash)
       @hash.splice(index, 0, he)

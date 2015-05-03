@@ -37,7 +37,6 @@ namespace 'Voronoi', (exports) ->
         else
           break
 
-      # Return the list of edges
       lbnd = @edgeList.leftEnd.right
       while lbnd isnt @edgeList.rightEnd
         @_clipLine(lbnd.edge)
@@ -74,7 +73,7 @@ namespace 'Voronoi', (exports) ->
       bp = { x: 0, y: 0 }
       if Voronoi.Geometry.intersect(left, bisector, bp)
         @queue.release(left)
-        @queue.insert(left, bp, Voronoi.Point.distance(bp, bottom))
+        @queue.insert(left, bp, Voronoi.Geometry.distance(bp, bottom))
 
       bisector
 
@@ -87,7 +86,7 @@ namespace 'Voronoi', (exports) ->
 
       bp = { x: 0, y: 0 }
       if Voronoi.Geometry.intersect(bisector, right, bp)
-        @queue.insert(bisector, bp, Voronoi.Point.distance(bp, bottom))
+        @queue.insert(bisector, bp, Voronoi.Geometry.distance(bp, bottom))
 
       bisector
 
@@ -122,7 +121,7 @@ namespace 'Voronoi', (exports) ->
 
       bp = { x: 0, y: 0 }
       if Voronoi.Geometry.intersect(bisector, rrbnd, bp)
-        @queue.insert(bisector, bp, Voronoi.Point.distance(bp, bottom))
+        @queue.insert(bisector, bp, Voronoi.Geometry.distance(bp, bottom))
 
     _endPoint: (e, lr, s) ->
       assert(e != null)
@@ -137,10 +136,10 @@ namespace 'Voronoi', (exports) ->
     _clipLine: (e) ->
       bounds = @queue.bounds
 
-      pxmin = bounds.left()
-      pxmax = bounds.right()
-      pymin = bounds.top()
-      pymax = bounds.bottom()
+      pxmin = bounds.xmin
+      pxmax = bounds.xmax
+      pymin = bounds.ymin
+      pymax = bounds.ymax
       s1 = s2 = null
       x1 = x2 = y1 = y2 = 0.0
 
