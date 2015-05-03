@@ -15,9 +15,6 @@ namespace 'Voronoi', (exports) ->
       Math.sqrt(dx * dx + dy * dy)
 
     @bisect: (s1, s2) ->
-      assert(s1 != null)
-      assert(s2 != null)
-
       newedge = new Voronoi.Edge(s1, s2)
       d = Voronoi.Geometry.subtract(s1, s2)
       adx = Math.abs(d.x)
@@ -36,10 +33,6 @@ namespace 'Voronoi', (exports) ->
       newedge
 
     @intersect: (el1, el2, bp) ->
-      assert(el1 != null)
-      assert(el2 != null)
-      assert(bp  != null)
-
       e  = null
       e1 = el1.edge
       e2 = el2.edge

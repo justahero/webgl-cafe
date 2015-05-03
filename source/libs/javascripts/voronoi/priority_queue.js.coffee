@@ -51,7 +51,6 @@ namespace 'Voronoi', (exports) ->
       { x: v.vertex.x, y: v.ystar }
 
     extractMin: ->
-      assert(@hash.length > 0)
       @hash.shift()
 
     _erase: (halfedge) ->

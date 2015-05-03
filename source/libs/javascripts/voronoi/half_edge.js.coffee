@@ -9,9 +9,6 @@ namespace 'Voronoi', (exports) ->
       @ystar       = 0
 
     release: ->
-      assert @left != null
-      assert @right != null
-
       @left.right = @right
       @right.left = @left
       @edge = null
@@ -41,17 +38,12 @@ namespace 'Voronoi', (exports) ->
       @edge.reg[(@orientation + 1) % 2]
 
     insert: (insert) =>
-      assert(insert != null)
-      assert(@right != null)
-
       insert.left  = this
       insert.right = @right
       @right.left  = insert
       @right = insert
 
     rightOf: (p) ->
-      assert(p != null)
-
       fast    = false
       above   = false
       edge    = @edge

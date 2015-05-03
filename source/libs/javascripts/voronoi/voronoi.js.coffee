@@ -49,8 +49,6 @@ namespace 'Voronoi', (exports) ->
       points.sort((l, r) -> if l.y == r.y then l.x - r.x else l.y - r.y)
 
     _handleSiteEvent: (newsite, root) ->
-      assert(newsite != null)
-
       lbnd   = @edgeList.leftbnd(newsite)
       rbnd   = lbnd.right
       bottom = lbnd.rightreg(root)
@@ -61,10 +59,6 @@ namespace 'Voronoi', (exports) ->
       @_insertEdge(edge, bisector, rbnd, newsite)
 
     _replaceEdge: (edge, left, bottom, orientation) ->
-      assert(edge != null)
-      assert(left != null)
-      assert(bottom != null)
-
       bisector = new Voronoi.HalfEdge(edge, orientation)
       left.insert(bisector)
 
@@ -76,9 +70,6 @@ namespace 'Voronoi', (exports) ->
       bisector
 
     _insertEdge: (edge, left, right, bottom) ->
-      assert(edge != null)
-      assert(left != null)
-
       bisector = new Voronoi.HalfEdge(edge, 1)
       left.insert(bisector)
 
@@ -89,8 +80,6 @@ namespace 'Voronoi', (exports) ->
       bisector
 
     _handleCircleEvent: (lbnd, root) ->
-      assert(lbnd != null)
-
       llbnd = lbnd.left
       rbnd  = lbnd.right
       rrbnd = rbnd.right
@@ -122,12 +111,8 @@ namespace 'Voronoi', (exports) ->
         @queue.insert(bisector, bp, Voronoi.Geometry.distance(bp, bottom))
 
     _endPoint: (e, lr, s) ->
-      assert(e != null)
-      assert(s != null)
-      assert(lr >= 0 && lr <= 1)
-
       e.ep[lr] = { x: s.x, y: s.y }
-      if e.ep[1 - lr] == null
+      if e.ep[(1 + lr) % 2] == null
         return
       @_clipLine(e)
 
