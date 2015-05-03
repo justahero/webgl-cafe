@@ -45,10 +45,8 @@ namespace 'Voronoi', (exports) ->
       @edges
 
     _sortSites: (vertices) ->
-      points = _.map(vertices, (v) -> { x: v.x, y: v.y })
-      points = vertices.sort(
-        (l, r) -> if l.y == r.y then l.x - r.x else l.y - r.y )
-      points
+      points = ({ x: v.x, y: v.y } for v in vertices)
+      points.sort((l, r) -> if l.y == r.y then l.x - r.x else l.y - r.y)
 
     _handleSiteEvent: (newsite, root) ->
       assert(newsite != null)
